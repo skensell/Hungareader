@@ -1,0 +1,53 @@
+
+/*Form stuff*/
+#content_container {
+    min-width: 75em;
+}
+
+#center {
+    width: 60em;
+    min-width: 60em;
+}
+
+form div {
+    display: inline-block;
+    width: 10em;
+    text-align: right;
+    margin-right: 10px;
+}
+
+input[type=submit], button {
+    width: 7em;
+    margin-left: 10em;
+}
+
+p {
+    margin-left: 4em;
+}
+
+div.error {
+    width: 23em;
+}
+
+a#sign_up_link, a#log_in_link {
+    display: inline;
+}
+
+
+
+/*OLD CODE: The 3 things below perform a CSS trick which brings the group in question
+to the front when clicked on. */
+/* 
+#center { 
+    position: relative;
+}
+#center > div { 
+    position: absolute;
+    min-height: 400px;
+    min-width: 800px;
+    background: white;
+}
+
+#sign_up_group:target {
+    z-index: 1;
+}*/

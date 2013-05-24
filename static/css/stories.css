@@ -1,0 +1,83 @@
+#center .top_nav {
+    font-size: 1.2em;
+    margin-right: 1.3em;
+}
+
+
+
+/* ========================================= */
+/* = Make the whole query_result clickable = */
+/* ========================================= */
+
+div.query_result {
+    padding: .5em;
+    position: relative;
+    background-color: white;
+/*    border: 1px solid white;*/
+}
+
+.query_result .make_clickable {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+
+/*The code above makes the whole div clickable
+but now if I want a link within it to be clickable
+it needs position relative and z-index 2.*/
+
+div.query_result.highlighted {
+    border-radius: 5px;
+    background-color: #f9f1da;
+/*    border: 1px solid #f1b502;*/
+}
+
+div.query_result.highlighted p.summary {
+    color: black;
+}
+
+.query_result h2.title {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.query_result ul.meta {
+    padding-left: 0px;
+    margin: 0px;
+    list-style-type: none;
+    font-size: .7em;
+    font-weight: 300;
+    color: #a1a1a1;
+}
+
+.query_result ul.meta li {
+    display: inline;
+    margin-right: 1em;
+}
+
+.query_result .uploader_name {
+    position: relative;
+    z-index: 2;
+}
+
+/* =================================== */
+/* = Bullet in front of student name = */
+/* =================================== */
+
+
+
+.query_result p.summary {
+    margin-top: .25em;
+    margin-bottom: .25em;
+    font-weight: 300;
+    color: #666666;
+}
+
+.query_result a.add_to_reading_list {
+    position: relative;
+    z-index: 2;
+}
+

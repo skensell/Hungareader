@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/readstory.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css"
+ type="text/css" media="screen" charset="utf-8">
+
+<!-- vocab_tabs plugin -->
+<script src="/static/js/jquery-1.9.1.min.js"></script>
+
+<!-- needed for .sortable -->
+<script src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script src="/static/js/readstory.js"></script>
+{% endblock %}
+
+{% block center %}
+
+
+<h1>{{story.title}}</h1>
+<hr/>
+
+<div>
+	{{story.text | safe}}
+</div>
+
+{% endblock %}
+
+{% block right_side %}
+<!-- The below has fixed position so it doesn't actually matter that it's in right_side -->
+<div id="vocab_area_container">
+		<div id="my_vocab">
+			
+			<div id="my_vocab_tools">
+				<div id="pencil_icon_container">
+					<a href="#" id="pencil_icon"><i class="icon-pencil"></i></a>
+					<div class="clear"></div>
+				</div>
+				<ul id="tool_menu">
+					<li><a href="#" id="edit_tool"><i class="icon-edit"></i> edit
+						<span class="on_switch">(on)</span></a></li>
+					<li><a href="#" id="delete_tool"><i class="icon-remove"></i> delete
+						<span class="on_switch">(on)</span></a></li>
+					<li><a href="#" id="reorder_tool"><i class="icon-reorder"></i> reorder
+						<span class="on_switch">(on)</span></a></li>
+				</ul>
+			</div>
+			
+			<div id="normal_instructions">
+				<p>You don't have any vocabulary yet for this story. To add words, you can either
+					import from other students' vocab lists or just start typing below!
+				</p>
+				<p>Words added here are automatically saved for the next time you visit this page.
+					You can also view and review them at <a href="/mydesk">my desk</a>, which is
+					probably a good idea if you want to actually remember them.
+				</p>
+			</div>		
+			
+			<table id="my_vocab_table" class="vocab_list" border="1">
+				<tbody>
+				{% for (v, v_key_e) in my_vocab %}
+					<tr id="{{v_key_e}}"><td>{{v.hungarian}}</td><td>{{v.meaning}}</td></tr>
+				{% endfor %}
+				</tbody>
+			</table>
+			
+			<div class="error" id="error_msg"></div>
+			<hr/>
+			<div id="instructions_container">
+				<form action="/addvocab" method="post" accept-charset="utf-8" id="add_vocab">
+						<input name="new_word" placeholder="new Hungarian" id="new_word">
+						<input name="new_def" placeholder="its meaning" id="new_def">
+						<button type="submit" id="submit_word"><i class="icon-plus"></i></button>
+				</form>
+			
+				<div id="delete_instructions">
+					<button class="red" id="delete_selected"><i class="icon-remove"></i>
+						 delete selected</button>
+					<br/>
+					<a href="#" class="select_all">select all</a>
+				</div>
+			
+				<div id="reorder_instructions">
+					<button id="reorder"><i class="icon-save"></i> save changes</button>
+					<span class="success_message"> Success!</span>
+					<br/>
+				</div>
+			</div>
+		</div>
+		
+		<div id="user_vocab">
+			<div id="pick_student">
+				<p class="instructions">Pick a student whose vocabulary list you'd like to browse.</p>
+				<hr/>
+				<ul class="tabs classic">
+					{% for (vl, num_words, vocabs) in v_lists %}
+						<li>
+							<div class="student_level {{vl.student.level}}">
+								<i class="icon-circle" style="font-size: .85em"></i>
+								<a class="student_level {{vl.student.level}}"
+								 href="#{{vl.student.name}}_vocab"><span
+								 class="name">{{vl.student.name}}</span> ({{num_words}})</a>							
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div id="show_vocab">
+				<a href="#pick_student" id="back_to_students">&lt;&lt; pick a student</a>
+				{% for (vl, num_words, vocabs) in v_lists %}
+					<div id="{{vl.student.name}}_vocab">
+						<p class="instructions">
+							You're browsing <strong>{{vl.student.name}}</strong>'s vocab.
+							Select the words you'd like to add to your vocab and click the button below.
+						</p>
+						<button class="import_chosen"><i class="icon-share"></i>
+							 import selected</button>
+						<span class="success_message"> Success!</span>
+						<br/>
+						<a href="#" class="select_all">select all</a>
+						<hr/>
+						<table class="vocab_list" border="1">
+							{% for (v, v_key_e) in vocabs %}
+								<tr id="{{v_key_e}}"><td>{{v.hungarian}}</td><td
+									>{{v.meaning}}</td></tr>
+							{% endfor %}
+						</table>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		
+		<div id="notes">
+			Réz means silver, but it's one of those weird ones where it
+			becomes rezet in the accusative.
+		</div>
+</div>
+
+<div id="right_tool_bar">
+	<ul class="tabs fade">
+		<li><a id="my_vocab_link" href="#my_vocab">My Vocab</a></li>
+		<li><a href="#user_vocab">User Vocab</a></li>
+		<li><a href="#notes">Notes</a></li>
+	</ul>
+	<a id="hide_vocab" href="#hide_vocab">Hide</a>
+</div>
+{% endblock %}

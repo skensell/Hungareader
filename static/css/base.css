@@ -1,0 +1,317 @@
+/* css common to all pages*/
+
+/*
+Colors:
+    green for links: #28a875
+    Hungarian red: #ce1126
+    dark gray for headers: #323232
+    light peach: #f9f1da
+    very light gray: #f1f1f1
+*/
+
+html {
+    /*I think height 100% makes it take up 100% of window as opposed to 100% of content*/
+    height: 100%; 
+}
+
+body {
+    position: relative;
+    height: 100%;
+    margin: 0px 0px;
+    
+    font-family: "Open Sans", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    /*now 1 em is 14px, and 1.5em would be 21px*/
+}
+
+.clear {
+    /*creates a 0-height div which gives the parent div height. floats o.w. don't force height.*/
+    clear:both;
+}
+
+
+/* main text for paragraphs and headings*/
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Droid Serif", serif;
+    color: #323232;
+}
+
+p {
+    color: #323232;
+}
+
+
+
+
+/* general link styling*/
+a, a:visited {
+    color: #28a875;
+    font-weight: 300;
+    text-decoration:none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+/* general input styling */
+
+label {
+    font-family: "Open Sans", sans-serif;
+    font-size: 1.2em;
+    color: #323232;
+}
+
+input, textarea, select, button {
+    padding: 4px;
+    border: 2px solid #dadada;
+    border-radius: 5px;
+    
+    font-size: 1em;
+    color: #323232;
+    margin-bottom: 1em;
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+    -webkit-box-shadow:0 0 5px #28a875;
+    -moz-box-shadow:0 0 5px #28a875;
+    box-shadow:0 0 5px #28a875;
+    outline: none;
+}
+
+
+.infocus {
+    /*at present nothing is using this.*/
+    -webkit-box-shadow:0 0 6px #28a875;
+    -moz-box-shadow:0 0 5px #28a875;
+    box-shadow:0 0 10px #027044;
+    outline: none;
+}
+
+input[type=submit], button {
+    width: 10em;
+    border-radius: 5px;
+    border-style: outset;
+    border: 1px solid #027044;
+
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    
+    /*this gives a nice green radial gradient*/
+    background: #28a875; /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  #28a875 45%, #38c994 98%); /* FF3.6+ */
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(45%,#28a875), color-stop(98%,#38c994)); /* Chrome,Safari4+ */
+    background: -webkit-radial-gradient(center, ellipse cover,  #28a875 45%,#38c994 98%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover,  #28a875 45%,#38c994 98%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover,  #28a875 45%,#38c994 98%); /* IE10+ */
+    background: radial-gradient(ellipse at center,  #28a875 45%,#38c994 98%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#28a875', endColorstr='#38c994',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    
+}
+
+input[type=submit]:hover, button:hover {
+    background: #28a875;
+    cursor: pointer;
+}
+
+input[type=submit].red, button.red {
+    border: 1px solid #CC0216;
+    background: #ce1126; /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  #ce1126 61%, #f96161 89%); /* FF3.6+ */
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(61%,#ce1126), color-stop(89%,#f96161)); /* Chrome,Safari4+ */
+    background: -webkit-radial-gradient(center, ellipse cover,  #ce1126 61%,#f96161 89%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover,  #ce1126 61%,#f96161 89%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover,  #ce1126 61%,#f96161 89%); /* IE10+ */
+    background: radial-gradient(ellipse at center,  #ce1126 61%,#f96161 89%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ce1126', endColorstr='#f96161',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+input[type=submit].red:hover, button.red:hover{
+    background: #ce1126;
+    cursor: pointer;
+}
+
+
+input::-webkit-input-placeholder {
+   font-family: "Open Sans", sans-serif;
+   font-weight: 400;
+   color: rgba(0,0,0,0.5);
+}
+
+input:-moz-placeholder { /* Firefox 18- */
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    color: rgba(0,0,0,0.5);
+}
+
+input::-moz-placeholder {  /* Firefox 19+ */
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    color: rgba(0,0,0,0.5);
+}
+
+input:-ms-input-placeholder {  
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    color: rgba(0,0,0,0.5);
+}
+/*
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; }
+
+*/
+
+div.error {
+    display: inline-block;
+    margin-left: .9em;
+    text-align: left;
+    color: #ce1126;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* top language select bar */
+div#language_select {
+    margin-top:-2px;
+    padding-right: 8px;
+    float: right;
+}
+
+a.language {
+    margin-top: 0px;
+    font-size: 0.7em;
+}
+
+
+/* header */
+.header {
+    padding-top: 19px; /* which is the exact height of the nav_bar below*/
+    padding-right: 8px;
+    padding-left: 30px;
+    
+    border-top: 1px solid #ce1126;
+    border-bottom: 1px solid #ce1126;
+    
+    background: #ce1126; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #ce1126 56%, #fcfcfc 75%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(56%,#ce1126), color-stop(75%,#fcfcfc)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #ce1126 56%,#fcfcfc 75%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #ce1126 56%,#fcfcfc 75%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #ce1126 56%,#fcfcfc 75%); /* IE10+ */
+    background: linear-gradient(135deg,  #ce1126 56%,#fcfcfc 75%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ce1126', endColorstr='#fcfcfc',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}  
+
+.header a, .header a:visited, #name {
+    color: #ce1126;
+    text-decoration: none;
+    font-weight: 300;
+    font-size: 1em;
+}
+
+.header a:hover{
+    text-decoration: underline;
+}
+
+.header #logo_link {
+    color: white;
+    font-family: 'Lobster', "Open Sans", sans-serif;
+    font-size: 2em;
+/*    font-size: 1.65em;*/
+}
+
+.header #logo_link:hover {
+    text-decoration: none;
+}
+
+.header #nav_bar > a {
+    float: right;
+    margin-left: 2em;
+/*    letter-spacing: 1px;*/
+}
+
+.header #nav_bar #name {
+    float: right;
+    margin-left: 2em;
+}
+
+
+
+/*The three main columns of the page*/
+#content_container {
+    /*keeps the content divs from wrapping around*/
+    min-width: 60em;
+}
+
+.content {
+    margin-top: 1.1em;
+    padding-left: 2em;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+/* Left side navigation  */
+#left {
+    padding-right: 1.3em;
+    border-right: 1px solid #b7b7b7;
+    width: 8em;
+    height: 20em;
+}
+
+#left h1 {
+    margin-top: 0px;
+}
+
+#left a.left_nav {
+    font-size: 1.2em;
+    display: block;
+}
+
+
+/*Main content in center*/
+#center {
+    width: 60%;
+    min-width: 30em;
+}
+
+
+/* ======================== */
+/* = Student Level bullet = */
+/* ======================== */
+
+.student_level {
+    font-weight: 400;
+}
+.student_level.beginner {
+    color: #1d875c;
+}
+.student_level.intermediate {
+    color: #0054a6;
+}
+.student_level.advanced {
+    color: #323232;
+}
+

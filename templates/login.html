@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/login.css" type="text/css" media="screen" charset="utf-8">
+{% endblock %}
+
+{% block left_side %}
+<h1>Login</h1>
+{% endblock %}
+
+
+{% block center %}
+<div id="log_in_group">
+	<form  id="login" name="login" method="post" action="/login" accept-charset="utf-8">
+		<div>
+			<label for="username">username:</label>
+		</div>
+		<input name="username" autofocus value="{{username}}" id="username">
+		<div class="error">{{error_username}}</div>
+		
+		<br/>
+	
+		<div>
+			<label for="password">password:</label>
+		</div>
+		<input type="password" name="password" value="{{password}}" id="password">
+		<div class="error">{{error_password}}</div>
+		
+		<br/>
+	
+		<input type="submit" value="log in">
+	</form>
+
+	<p>Not a member yet? <a id="sign_up_link" href="/signup">Sign up!</a></p>
+
+</div>
+
+{% endblock %}

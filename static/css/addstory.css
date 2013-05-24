@@ -1,0 +1,41 @@
+
+input, textarea, form > div {
+    width: 35em;
+    display: block;
+}
+
+select {
+    width: 14em;
+    display: block;
+}
+
+div.error {
+    margin-left: 0px;
+    margin-bottom: .5em;
+}
+
+
+
+/* ======================== */
+/* = Rich textarea plugin = */
+/* ======================== */
+
+div.jHtmlArea { 
+    padding: 0px;
+    border: 2px solid #dadada;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    
+    /*inline block is their default styling*/
+    display: inline block; 
+}
+
+
+/*This selects the text area*/
+div.jHtmlArea div iframe {
+    
+    border-top: 1px solid #dadada;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-bottom: 1px solid white;
+}

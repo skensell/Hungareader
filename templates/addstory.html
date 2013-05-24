@@ -1,0 +1,44 @@
+{% extends "storiesbase.html" %}
+
+{% block head %}
+
+<link rel="stylesheet" href="/static/css/storiesbase.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="/static/css/addstory.css" type="text/css" media="screen" charset="utf-8">
+
+<!-- Here's stuff for the richtextarea plugin called jHtmlArea.  It requires the
+	older version of jquery. -->
+<link rel="stylesheet" type="text/css" href="/static/plugins/richtextarea/style/jHtmlArea.css" />
+<script type="text/javascript" src="/static/plugins/richtextarea/scripts/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/static/plugins/richtextarea/scripts/jHtmlArea-0.7.5.min.js"></script>
+<script type="text/javascript" src="/static/js/addstory.js"></script>
+
+{% endblock %}
+
+{% block center %}
+<form name="add_story" method="post">
+	<div class="error">{{error}}</div>
+	
+	<div>
+		<label for="title">title</label>
+	</div>
+	<input name="title" autofocus maxlength="495" value="{{title}}">
+	
+	<div>
+	<label for="summary">brief summary (optional)</label>
+	</div>
+	<textarea name="summary" maxlength="495" rows="2">{{summary}}</textarea>
+
+	<label for="story">story</label>
+	<textarea id="story" name="story" rows="20">{{story}}</textarea>
+
+	<select name="difficulty" size="1">
+		<option value="" disabled selected>Choose difficulty</option>
+		<option value="Beginner">Beginner</option>
+		<option value="Intermediate">Intermediate</option>
+		<option value="Advanced">Advanced</option>
+	</select>
+	
+	<input type="submit" value="Start reading it!" id="submit_story">
+
+</form>
+{% endblock %}

@@ -1,0 +1,256 @@
+/*The content_container has width 60em*/
+#content_container {
+    width: 70em;
+}
+
+#left {
+    display: none;
+}
+
+#center {
+    width: 35em;
+}
+
+#right {
+    width: 35em;
+}
+
+/* ============== */
+/* = Story text = */
+/* ============== */
+
+p {
+    text-align: justify;
+}
+
+
+
+
+
+
+
+/* ================ */
+/* = Vocab Area   = */
+/* ================ */
+
+#vocab_area_container {
+    position:fixed;
+    padding: 0 1em 0 1em;
+    top: 7em;
+    left: 39em;
+    width: 19.5em;
+    height: 25em;
+    border-top: 1px solid grey;
+    border-left: 1px solid grey;
+    border-bottom: 1px solid grey;
+    -moz-box-shadow:    3px 3px 10px 1px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.8);
+    box-shadow:         3px 3px 10px 1px rgba(0,0,0,0.8);
+    overflow: auto;
+    /*give a max height and overflow scrollbar*/
+}
+
+
+#vocab_area_container::-webkit-scrollbar {
+    width: .5em;
+}
+ 
+#vocab_area_container::-webkit-scrollbar-track {
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.6);*/
+    background-color: lightgrey;
+}
+ 
+#vocab_area_container::-webkit-scrollbar-thumb {
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);*/
+    background-color: rgba(0,0,0,0.3);
+}
+
+
+
+#right_tool_bar {
+    position: fixed;
+    top: 7em;
+    left: 61.5em;
+    width: 6em;
+    padding-left: .3em;
+    border-left: 1px solid lightgrey;
+}
+
+#right_tool_bar ul.tabs {
+    margin: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+#right_tool_bar ul.tabs a.active {
+    font-weight: 400;
+    color: grey;
+}
+#right_tool_bar ul.tabs a.active:hover {
+    cursor: default;
+    text-decoration: none;
+}
+
+
+
+
+
+
+/* ==================== */
+/* = My Vocab Tools   = */
+/* ==================== */
+
+div#my_vocab_tools {
+    display: block;
+    position: fixed;
+    z-index: 2;
+    top:7em;
+    left: 52.3em;
+}
+
+div#my_vocab_tools div#pencil_icon_container{
+    /* needed so the menu doesn't immediately disappear on mouseleave*/
+    width: 7em;
+}
+
+div#my_vocab_tools a#pencil_icon {
+    float: right;
+    padding: 0 .1em;
+    color: lightgrey;
+    border: 1px solid lightgrey;
+    border-top: 1px solid grey;
+    border-radius: 2px;
+    background-color: white;
+}
+
+div#my_vocab_tools a:hover {
+    text-decoration: none;
+}
+
+div#my_vocab_tools ul#tool_menu {
+    display: none;
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style-type: none;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    background-color: #f1f1f1;
+}
+
+div#my_vocab_tools ul#tool_menu a {
+    display: block;
+}
+div#my_vocab_tools ul#tool_menu a:hover {
+    background-color: #e5e5e5;
+}
+div#my_vocab_tools span.on_switch {
+    display: none;
+}
+.edit_chosen {
+    background-color: #eddc90;
+}
+.delete_chosen {
+    background-color: #ce1126;
+}
+.edit_highlight {
+    background-color: #f9f1da;
+}
+.delete_highlight {
+    background-color: #e58993;
+}
+/*.reorder_highlight {
+    background-color: #93d3ba;
+}*/
+.moveable {
+    cursor: move;
+}
+
+/* ==================== */
+/* = My vocab content = */
+/* ==================== */
+
+table.vocab_list {
+    /*The width and margin need to add to width of container*/
+    width: 18.75em; 
+/*    margin-left: .75em;*/
+    border-collapse: collapse;
+    border: none;
+}
+
+table.vocab_list td{
+    padding: .2em 0;
+}
+
+table.vocab_list td:first-child {
+    border: none;
+    text-align: left;
+    color: #323232;
+    font-size: .85em;
+}
+
+table.vocab_list td:nth-child(2) {
+    padding-left: .5em;
+    border: none;
+    text-align: left;
+    color: silver;
+    font-size: .7em;
+    font-weight: 300;
+}
+
+div.error {
+    margin-left: 0;
+}
+
+input#new_word, input#new_def {
+    display: inline-block;
+    margin-left: 0;
+    margin-bottom: .1em;
+    width: 75%;
+    text-align: left;
+    font-size: .85em;
+}
+
+button#submit_word {
+    margin-left: .1em;
+    width: 15%;
+    padding: 0 auto;
+    font-size: .85em;
+}
+
+div#instructions_container {
+    min-height: 5em;
+}
+
+div#delete_instructions {
+    display: none;
+}
+div#delete_instructions a.select_all {
+    color: #ce1126;
+}
+div#reorder_instructions{
+    display: none;
+}
+
+/* ============== */
+/* = User Vocab = */
+/* ============== */
+
+div#pick_student ul.tabs {
+    margin: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+span.success_message {
+    display: none;
+    color: #28a875;
+}
+
+.import_highlight{
+    background-color: #f9f1da;
+}
+.import_chosen{
+    background-color: #eddc90;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+ 	<link rel="stylesheet" href="/static/css/base.css" type="text/css" charset="utf-8">
+
+	<!-- include Lobster font -->
+	<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+
+	{% block head %}{% endblock %}
+	
+	<title>Hungarian Reader</title>
+	
+</head>
+<body>
+	<div>
+		<div id="language_select">
+			<a class="language" href="/">magyarul</a>
+		</div>
+		<div class="clear"></div> <!-- this gives the containing div height	-->
+	</div>
+	
+	<div class="header">
+		<div id="logo">
+			<a id="logo_link" href="/">Hungareader</a>
+		</div>
+		
+		<!-- float to right-->
+		<div>
+			<div id="nav_bar">
+				{% if student %}
+						<span id="name">{{student.name}} (<a href="/logout">logout</a>)</span>
+					{% else %}
+					<a href="/login">login</a>
+					{% endif %}
+				
+				<a href="/mydesk">my desk</a>
+				<a href="/">stories</a>
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+		<div class="clear"></div>
+	</div>
+	
+	<div id="content_container">
+		<div id="left" class="content">
+			{% block left_side %}{% endblock %}
+		</div><!-- inline block
+		
+		--><div id="center" class="content">
+			{% block center %}{% endblock %}		
+		</div><!-- inline block
+		
+		--><div id="right" class="content">
+			{% block right_side %}{% endblock %}		
+		</div>
+	</div>
+</body>
+</html>

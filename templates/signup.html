@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/login.css" type="text/css" media="screen" charset="utf-8">
+{% endblock %}
+
+{% block left_side %}
+<h1>Sign up</h1>
+{% endblock %}
+
+{% block center %}
+<div id="sign_up_group">
+	<form id="signup" name="signup" method="post" action="/signup" accept-charset="utf-8">
+		<div>
+			<label for="new_user">username:</label>
+		</div>
+		<input name="new_user" autofocus value="{{new_user}}" id="new_user">
+		<div class="error">{{error_new_user}}</div>
+		<br/>
+	
+		<div>
+			<label for="new_pwd">password:</label>
+		</div>
+		<input name="new_pwd" type="password" value="" id="new_pwd">
+		<div class="error">{{error_new_pwd}}</div>
+		
+		<br/>
+	
+		<div>
+			<label for="verify">verify password:</label>
+		</div>
+		<input name="verify" value="" type="password" id="verify">
+		<div class="error">{{error_verify}}</div>
+		
+		<br/>
+	
+		<div>
+			<label for="email">email (optional):</label>
+		</div>
+		<input name="email" value="{{email}}" id="email">
+		<div class="error">{{error_email}}</div>
+		
+		<br/>
+		
+		<div>
+			<label for="level">my Hungarian:</label>
+		</div>
+		<select name="level" size="1">
+			<option value="" disabled selected>Choose level</option>
+			<option value="beginner">beginner</option>
+			<option value="intermediate">intermediate</option>
+			<option value="advanced">advanced</option>
+		</select>
+		<div class="error">{{error_level}}</div>
+		
+		<br/>
+		<input type="submit" value="sign up">
+	</form>
+</div>
+
+</div>
+
+{% endblock %}

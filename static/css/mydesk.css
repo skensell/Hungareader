@@ -1,0 +1,18 @@
+#left {
+    width: 9em;
+}
+
+#center {
+    width: 23em;
+    border-right: 1px solid lightgrey;
+}
+
+
+a#my_profile {
+    margin-top: 1.3em;
+}
+
+input#retrieve_vocab {
+    font-size: 1em;
+    width: 4em;
+}
