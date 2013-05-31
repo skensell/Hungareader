@@ -161,15 +161,16 @@
 		<div id="comments">
 			<h3>Comments</h3>
 			<hr/>
-			<textarea id="comments_text" name="comments_text">
-				Réz means silver, but it's one of those weird ones where it
-				
-				becomes rezet in the accusative.
-			</textarea>
-			<div id="comments_instructions">
-				<button id="comments_save"><i class="icon-save"></i> save changes</button>
-				<span class="success_message"> Success!</span>
-			</div>
+			<form action="/savecomments" method="post" accept-charset="utf-8">
+				<textarea id="comments_text" name="comments_text">
+					{{story.comments}}
+				</textarea>
+				<div id="comments_instructions">
+					<button type="submit" id="comments_save"><i class="icon-save"></i> save changes</button>
+					<span class="success_message"> Success!</span>
+				</div>
+
+			</form>
 		</div>
 </div>
 

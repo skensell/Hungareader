@@ -141,7 +141,7 @@ function initVocabArea(){
     initMyVocab(vocab_area);
     initUserVocab();
     initQandA();
-    //initComments();
+    initComments();
     
     initRightToolBar(vocab_area);
 }
@@ -292,6 +292,24 @@ function initQandA(){
         }
     });
     
+    $questions.on('click', '.A_container a.thanks', function(e){
+        
+        // make sure they don't thank twice
+        if ($(this).hasClass('clicked')){ return false; }
+        
+        //ajax
+        incrementThanks($(this));
+        
+        e.preventDefault(); 
+    });
+}
+
+function initComments(){
+    // what do i need here
+    $('#comments form').submit(function(e){
+        saveComments($(this));
+        e.preventDefault();
+    });
 }
 
 function initRightToolBar(vocab_area){
@@ -516,7 +534,10 @@ function buildVocabToolMenu($add_vocab_form){
         } 
         // when to show the pencil icon
         $pencil_icon.hide();
-        $('div#vocab_area_container').hover(function(e){$pencil_icon.toggle();});
+        $('div#vocab_area_container').on({
+            mouseenter: function(e){$pencil_icon.show();},
+            mouseleave: function(e){$pencil_icon.hide();},
+        });
         // when to show the tool_menu
         $pencil_icon.click(function(e){$tool_menu.show(); e.preventDefault();});
         // when to hide the tool_menu
@@ -553,7 +574,6 @@ function addVocab($add_vocab_form, edit_tool){
     // REFACTORED and TESTED :)
     var vl_index = -1;
     var mode = 'normal';
-    console.log('fired ajax request');
     if (edit_tool){
         vl_index = edit_tool.chosen.index(); //number of rows before it
         mode = 'edit';
@@ -667,3 +687,36 @@ function answerQuestion($answer_form, $answer, q_key_e){
         error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
     });
 }
+
+function incrementThanks($thanks_link){
+    var a_key_e = $thanks_link.closest('.A_container').attr('id');
+    $.ajax({
+        url: '/incrementthanks',
+        type: 'POST',
+        data: $.param({'a_key_e': a_key_e}),
+        success: function(){
+            //increment the actual counter and disable the link
+            $thanks_link.siblings('.thanks_counter').html(function(i,t){
+                return (parseInt(t) + 1).toString();
+            });
+            $thanks_link.addClass('clicked');
+        },
+        error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
+    });
+}
+
+function saveComments($comments_form){
+    $.ajax({
+        url: "/savecomments",
+        type: "POST",
+        data: $comments_form.serialize() + "&story_id=" + story_id,
+        success: function(){
+            $comments_form.find('.success_message').slideDown(200).delay(1000).fadeOut(400);
+        },
+        error: function(xhr, status){alert( "Sorry, there was a problem!");},
+    });
+}
+
+
+
+

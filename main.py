@@ -101,7 +101,7 @@ class Story(db.Model):
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
-    notes = db.TextProperty()
+    comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
     
     
     @classmethod
@@ -247,7 +247,7 @@ class ReadStory(HandlerBase):
         for q in Question.by_story(story_key):
             q_key = q.key()
             q_key_e = encrypt(str(q_key))
-            answers = Answer.by_question(q_key)
+            answers = [(a, encrypt(str(a.key()))) for a in Answer.by_question(q_key)]
             QandA.append((q, q_key_e, answers))
         
         self.render("readstory.html", story=story, my_vocab=my_vocab, v_lists=v_lists, QandA=QandA)
@@ -353,8 +353,34 @@ class AnswerQuestion(HandlerBase):
         
         a = Answer(answer=answer, uploader=self.student, question=q_key)
         a.put()
-        self.render('readstoryQandA.html', answers=[a])
+        self.render('readstoryQandA.html', answers=[(a, encrypt(str(a.key())))])
     
+
+class IncrementThanks(HandlerBase):
+    def post(self):
+        a_key_e = self.request.get('a_key_e')
+        a_key = db.Key(decrypt(a_key_e))
+        a = db.get(a_key)
+        a.thanks += 1
+        a.put()
+        
+
+
+# ============
+# = Comments =
+# ============
+
+class SaveComments(HandlerBase):
+    def post(self):
+        story = Story.by_id(int(self.request.get('story_id')))
+        comments = self.request.get('comments_text')
+        
+        story.comments = comments
+        story.put()
+
+
+
+
 
 # ===========
 # = MY DESK =
@@ -434,11 +460,13 @@ app = webapp2.WSGIApplication([
                                ('/askquestion/?', AskQuestion),
                                ('/deletevocab/?', DeleteVocab),
                                ('/importvocab/?', ImportVocab),
+                               ('/incrementthanks/?', IncrementThanks),
                                ('/login/?', Login),
                                ('/logout/?', LogOut),
                                ('/mydesk/?', MyDesk),
                                ('/reordervocab/?', ReorderVocab),
                                ('/(\d+)', ReadStory),
+                               ('/savecomments/?', SaveComments),
                                ('/signup/?', SignUp)
                               ],
                               debug=True)

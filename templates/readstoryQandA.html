@@ -40,8 +40,8 @@
 	</div>
 {% endif %}
 
-{% for answer in answers %}
-	<div class="A_container">
+{% for (answer, a_key_e) in answers %}
+	<div class="A_container" id="{{a_key_e}}">
 		<p>
 			<span class="big_A">A</span>
 			{{answer.answer}}
@@ -54,7 +54,8 @@
 				{{answer.created.strftime("%b %d, '%y")}}
 			</div>
 			<div>
-				{{answer.thanks}} have said <a>thanks!</a>
+				<span class="thanks_counter">{{answer.thanks}}</span> 
+				have said <a href="#" class="thanks">thanks!</a>
 			</div>
 		</div>
 	</div>
