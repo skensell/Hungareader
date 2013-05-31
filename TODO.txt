@@ -1,19 +1,18 @@
 Next:
 
 ReadStory:
-	- REFACTOR code using learn.jquery as a guide.
-		- This is most important for reorder_off() to correctly save changes
-	- Figure out notes.
+	- Scroll to answer after submitting it.
+	- Test it to death.
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
 		
 		
 For the 2nd launch:
-	-add a hide meaning tab to my_vocab_tools which sets
+	- add a hide meaning tab to my_vocab_tools which sets
 	 CSS opacity transparent on td:2nd child
-	-add a view_printable tab to my_vocab_tools
-	
+	- add a view_printable tab to my_vocab_tools
+	- Add location property to questions
 	
 	
 	

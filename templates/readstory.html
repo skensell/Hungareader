@@ -129,9 +129,47 @@
 			</div>
 		</div>
 		
-		<div id="notes">
-			Réz means silver, but it's one of those weird ones where it
-			becomes rezet in the accusative.
+		<div id="QandA">
+			<div id="QandA_instructions">
+				<h3>Confused? Ask a question!</h3>
+			</div>
+			
+			<form action="/askquestion" method="post" accept-charset="utf-8" id="ask_question">
+				<div class="Q_label_container">
+					<label class="big_Q">Q </label>
+				</div><!-- 
+			 --><textarea type="text" name="question" rows="3"
+				 placeholder="How do you translate..." id="question"></textarea>
+				
+				<button type="submit" class="red" id="ask_it_button"><i class="icon-comment"></i>
+						 ask it</button>
+				
+				<div class="clear"></div>
+			</form>
+			
+			<div id="questions">
+				{% for (question, q_key_e, answers) in QandA %}
+				
+					{% include 'readstoryQandA.html' %}
+				
+				{% endfor %}
+			</div>
+			
+		<!-- QandA end  -->
+		</div>
+		
+		<div id="comments">
+			<h3>Comments</h3>
+			<hr/>
+			<textarea id="comments_text" name="comments_text">
+				Réz means silver, but it's one of those weird ones where it
+				
+				becomes rezet in the accusative.
+			</textarea>
+			<div id="comments_instructions">
+				<button id="comments_save"><i class="icon-save"></i> save changes</button>
+				<span class="success_message"> Success!</span>
+			</div>
 		</div>
 </div>
 
@@ -139,7 +177,8 @@
 	<ul class="tabs fade">
 		<li><a id="my_vocab_link" href="#my_vocab">My Vocab</a></li>
 		<li><a href="#user_vocab">User Vocab</a></li>
-		<li><a href="#notes">Notes</a></li>
+		<li><a href="#QandA">Q &amp A</a></li>
+		<li><a href="#comments">Comments</a></li>
 	</ul>
 	<a id="hide_vocab" href="#hide_vocab">Hide</a>
 </div>

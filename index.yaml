@@ -10,6 +10,17 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Answer
+  properties:
+  - name: question
+  - name: created
+
+- kind: Question
+  properties:
+  - name: story
+  - name: created
+    direction: desc
+
 - kind: VocabList
   properties:
   - name: story

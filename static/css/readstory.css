@@ -254,3 +254,122 @@ span.success_message {
 .import_chosen{
     background-color: #eddc90;
 }
+
+
+
+
+
+/* ========= */
+/* = Q & A = */
+/* ========= */
+
+div#QandA .Q_label_container, .A_label_container { 
+    display: inline-block; 
+    vertical-align: top;
+    margin-right: .2em;
+}
+
+div#QandA .big_Q { color: #ce1126; font-size: 2em;}
+
+div#QandA .meta_Q, div#QandA .meta_A {
+    margin-left: 8em;
+    padding-left: .25em; 
+    border-left: .4em solid lightgrey;
+	background-color: #f1f1f1;
+    font-size: .85em;
+}
+
+div#QandA #question { 
+    vertical-align: top;
+    float: right;
+    width: 16.2em;
+    min-width: 16.2em;
+    max-width: 16.2em;
+}
+div#QandA #ask_it_button{
+    float: right;
+    width: 6em;
+    margin-left: 1.75em;
+}
+
+div#QandA .big_A { color: #20865d; font-size: 2em;}
+
+div#QandA .answer_question { 
+    display: none;
+    margin-top: .2em;
+}
+
+div#QandA .answer_question textarea{
+    float: right;
+    width: 16.2em;
+    min-width: 16.2em;
+    max-width: 16.2em;
+    margin-bottom: .2em;
+}
+
+div#QandA button.submit_answer {
+    float: right;
+    width: 10em;
+    margin-bottom: .1em;
+}
+
+div#QandA .A_container > p, div#QandA .Q_container > p {
+    margin: .5em auto;
+}
+
+div#QandA .QA_container {
+    margin-bottom: 2em;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ========= */
+/* = Comments = */
+/* ========= */
+
+#comments {
+    width: 100%;
+}
+
+#comments textarea#comments_text {
+    white-space: normal;
+    margin: auto;
+    width: 98%;
+    min-width:98%;
+    max-width: 98%;
+    height: 16.75em;
+    max-height:16.75em;
+    min-height:16.75em;
+    resize: none;
+    border: none;
+}
+
+#comments textarea#comments_text:focus {
+    -webkit-box-shadow:0 0 0px #28a875;
+    -moz-box-shadow:0 0 0px #28a875;
+    box-shadow:0 0 0px #28a875;
+    outline: none;
+}
+
+#comments textarea#comments_text::-webkit-scrollbar {
+    width: .5em;
+}
+ 
+#comments textarea#comments_text::-webkit-scrollbar-track {
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.6);*/
+    background-color: lightgrey;
+}
+ 
+#comments textarea#comments_text::-webkit-scrollbar-thumb {
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);*/
+    background-color: rgba(0,0,0,0.3);
+}
+

@@ -10,10 +10,10 @@
 
 {%block center %}
 <a class="top_nav" href="/">most recent</a>
-<a class="top_nav" href="/">most read</a>
-<a class="top_nav" href="/">highest rated</a>     
-<a class="top_nav" href="/">tracks</a>	     
-<a class="top_nav" href="/">tags</a>
+<a class="top_nav disabled" href="/">most read</a>
+<a class="top_nav disabled" href="/">highest rated</a>     
+<a class="top_nav disabled" href="/">tracks</a>	     
+<a class="top_nav disabled" href="/">tags</a>
 <br>
 <br>
 
@@ -23,10 +23,11 @@
 	<h2 class="title">{{story.title}}</h2>
 	<ul class="meta">
 		<li>{{story.difficulty}}</li>
-		<li>Uploaded by <span class="student_level {{story.uploader.level}}">&bull;</span><a class="uploader_name" href="/">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
+		<li>Uploaded by <span class="student_level {{story.uploader.level}}">&bull;</span><a class="uploader_name
+			disabled" href="/">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
 	</ul>
 	<p class="summary">{{story.summary}}</p>
-	<a class="add_to_reading_list" href="/">add to reading list</a>
+	<a class="add_to_reading_list disabled" href="/">add to reading list</a>
 </div>
 {% endfor %}
 

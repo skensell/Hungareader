@@ -3,6 +3,7 @@
 /*
 Colors:
     green for links: #28a875
+    slightly darker green: #20865d
     Hungarian red: #ce1126
     dark gray for headers: #323232
     light peach: #f9f1da
@@ -173,6 +174,8 @@ div.error {
 }
 
 
+/*a.disabled { color: #a1a1a1;}*/
+a.disabled:hover{ text-decoration: none; cursor: default;}
 
 
 

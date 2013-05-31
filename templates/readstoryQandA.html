@@ -1,0 +1,66 @@
+<!-- Q and A html -->
+{% if question %}
+<div class="QA_container" id="{{q_key_e}}">
+	<div class="Q_container">
+		<hr/>
+		<p>
+			<span class="big_Q">Q</span>
+			{{question.question}}
+		</p>
+		
+		<div class="meta_Q">
+			<div>
+				<!-- <i class="icon-circle student_level {{question.uploader.level}}"
+				 style="font-size: .5em; vertical-align: center"></i> -->
+				<a class="student_level
+				{{question.uploader.level}}">{{question.uploader.name}}</a>
+				&nbsp; &nbsp;
+				{{question.created.strftime("%b %d, '%y")}}
+			</div>
+			<div>
+				<a href="#" class="answer_it">answer it!</a>
+			</div>
+		</div>
+		
+		<form class="answer_question" action="/answerquestion" method="post"
+		 accept-charset="utf-8">
+			<div class="A_label_container">
+				<label class="big_A">A </label>
+			</div><!-- 
+		 --><textarea type="text" name="answer" rows="3"
+			 placeholder="The way to think of it is..." class="answer"></textarea>
+			
+			<button type="submit"
+			 class="submit_answer"><i class="icon-comment"></i>
+					 submit answer</button>
+					
+			<div class="clear"></div>
+			
+		</form>
+	</div>
+{% endif %}
+
+{% for answer in answers %}
+	<div class="A_container">
+		<p>
+			<span class="big_A">A</span>
+			{{answer.answer}}
+		</p>
+		<div class="meta_A">
+			<div>
+				<a class="student_level
+				{{answer.uploader.level}}">{{answer.uploader.name}}</a>
+				&nbsp; &nbsp;
+				{{answer.created.strftime("%b %d, '%y")}}
+			</div>
+			<div>
+				{{answer.thanks}} have said <a>thanks!</a>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+<!-- end of div.QA_container -->
+{% if question %}
+</div>
+{% endif %}

@@ -1,6 +1,7 @@
 import re, hmac, hashlib, random, string
 from Crypto.Cipher import DES
 import base64
+import logging
 
 from secrets import *
 
@@ -101,6 +102,5 @@ def validate(new_user, new_pwd, verify, level, email):
 
 
 if __name__ == '__main__':
-    a = encrypt('hello') #throws errors if you try to print this
-    print a
+    a = encrypt('ahFkZXZ-aG93aWxlYXJuZWRpdHISCxIFU3RvcnkYgICAgIDArwoM')
     print decrypt(a)

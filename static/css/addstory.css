@@ -4,6 +4,11 @@ input, textarea, form > div {
     display: block;
 }
 
+label {
+    font-family: "Droid Serif", serif;
+    font-weight: 700;
+}
+
 select {
     width: 14em;
     display: block;

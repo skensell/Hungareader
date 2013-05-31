@@ -140,7 +140,8 @@ function initVocabArea(){
     
     initMyVocab(vocab_area);
     initUserVocab();
-    // initNotes();
+    initQandA();
+    //initComments();
     
     initRightToolBar(vocab_area);
 }
@@ -251,6 +252,44 @@ function initUserVocab(){
         }
         
         e.preventDefault();
+    });
+    
+}
+
+function initQandA(){
+    var $questions = $('#QandA #questions');
+    var $ask_question_form = $('#QandA form#ask_question');
+    var $question = $ask_question_form.find('#question');
+    
+    // submit a new question
+    $ask_question_form.submit(function(e){
+        if ($question.val().trim().length === 0){ return false; }
+        else {
+            askQuestion($ask_question_form, $question);
+        }
+        e.preventDefault();
+    });
+    
+    // show the answer form when clicking on "answer it!"
+    $questions.on('click','a.answer_it', function(e){
+        $(this).parents('.meta_Q').siblings('form.answer_question').toggle();
+
+        if ($(this).html() === 'answer it!' ){ $(this).html("don't answer it");}
+        else {$(this).html('answer it!');}
+
+        e.preventDefault();
+    });
+    
+    // submit an answer to a question
+    $questions.on('submit', 'form.answer_question', function(e){
+        e.preventDefault();
+        var $answer = $(this).children('.answer');
+        if ($answer.val().length === 0){ return false; }
+        else{
+            var q_key_e = $(this).parents('.QA_container').attr('id');
+            //ajax
+            answerQuestion($(this), $answer, q_key_e);
+        }
     });
     
 }
@@ -598,3 +637,33 @@ function importVocab($chosen){
     });
 }
 
+function askQuestion($ask_question_form, $question){
+    $.ajax({
+        url: "/askquestion",
+        type: "POST",
+        data: $ask_question_form.serialize() + '&story_id=' + story_id,
+        success: function(new_question) {
+            //prepend the new question to the list of questions
+            $('#QandA div#questions').prepend(new_question);
+            $question.val('');
+        },
+        error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
+    });
+}
+
+function answerQuestion($answer_form, $answer, q_key_e){
+    // LESSON LEARNED: $.param is necessary when working with q_key_e. The encrypted key still
+    // needs to be URL safe when sent back to the server.
+    $.ajax({
+        url: "/answerquestion",
+        type: "POST",
+        data: $.param({'answer': $answer.val(), 'story_id': story_id, 'q_key_e': q_key_e}),
+        success: function(new_answer) {
+            //append the new_answer to the other answers
+            $answer.val('');
+            $answer_form.siblings('.meta_Q').find('a.answer_it').trigger('click');
+            $answer_form.closest('.QA_container').append(new_answer);
+        },
+        error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
+    });
+}

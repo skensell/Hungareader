@@ -71,11 +71,11 @@ class Student(db.Model):
     email = db.StringProperty()
     level = db.StringProperty(required = True)
     date_joined = db.DateProperty(auto_now_add=True)
-    vocab_added = db.IntegerProperty()
-    vocab_increase = db.IntegerProperty()
-    vocab_reviews = db.IntegerProperty()
-    stories_read = db.IntegerProperty()
-    stories_uploaded = db.IntegerProperty()#can get from references from Story
+    # vocab_added = db.IntegerProperty()
+    # vocab_increase = db.IntegerProperty()
+    # vocab_reviews = db.IntegerProperty()
+    # stories_read = db.IntegerProperty()
+    # stories_uploaded = db.IntegerProperty()#can get from references from Story
     
     @classmethod
     def by_id(cls, sid):
@@ -101,6 +101,7 @@ class Story(db.Model):
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
+    notes = db.TextProperty()
     
     
     @classmethod
@@ -157,7 +158,33 @@ class VocabList(db.Model):
         return VocabList.all().filter("story =", story_key).run(limit=10)
     
 
+class Question(db.Model):
+    question = db.TextProperty(required=True)
+    uploader = db.ReferenceProperty(Student)
+    created = db.DateTimeProperty(auto_now_add=True)
+    story = db.ReferenceProperty(Story)
+    
+    @classmethod
+    def by_story(cls, story_key):
+        return Question.all().filter("story =", story_key).order('-created').run()
+    
+    # @classmethod
+    # def by_story_with_keys(cls, story_key):
+    #     q_with_keys
+    
 
+class Answer(db.Model):
+    answer = db.TextProperty(required=True)
+    uploader = db.ReferenceProperty(Student)
+    question = db.ReferenceProperty(Question)
+    thanks = db.IntegerProperty(default=0)
+    created = db.DateTimeProperty(auto_now_add=True)
+    
+    @classmethod
+    def by_question(cls, q_key):
+        return Answer.all().filter("question =", q_key).order('created').run(limit=10)
+
+    
 # ============
 # = HANDLERS =
 # ============
@@ -196,8 +223,8 @@ class AddStory(HandlerBase):
             uploader = self.student
             s = Story(title=title, summary=summary, text=text,
                 difficulty=difficulty, uploader=uploader)
-            s.put()
-            self.redirect("/")
+            story_key = s.put()
+            self.redirect("/%s"%story_key.id())
     
 
 class ReadStory(HandlerBase):
@@ -216,7 +243,14 @@ class ReadStory(HandlerBase):
             num_words = len(vocabs)
             v_lists.append((vl, num_words, vocabs))
         
-        self.render("readstory.html", story=story, my_vocab=my_vocab, v_lists=v_lists)
+        QandA = []
+        for q in Question.by_story(story_key):
+            q_key = q.key()
+            q_key_e = encrypt(str(q_key))
+            answers = Answer.by_question(q_key)
+            QandA.append((q, q_key_e, answers))
+        
+        self.render("readstory.html", story=story, my_vocab=my_vocab, v_lists=v_lists, QandA=QandA)
     
 
 
@@ -294,6 +328,34 @@ class ReorderVocab(HandlerBase):
 
 
 
+# =========
+# = Q & A =
+# =========
+
+class AskQuestion(HandlerBase):
+    def post(self):
+        story = Story.by_id(int(self.request.get('story_id')))
+        question = self.request.get('question')
+        
+        q = Question(question=question, uploader=self.student, story=story)
+        q.put()
+        q_key_e = encrypt(str(q.key()))
+        
+        self.render('readstoryQandA.html', question=q, q_key_e=q_key_e)
+    
+
+class AnswerQuestion(HandlerBase):
+    def post(self):
+        q_key_e = self.request.get('q_key_e')
+        q_key = db.Key(decrypt(q_key_e))
+        answer = self.request.get('answer')
+        story = Story.by_id(int(self.request.get('story_id')))
+        
+        a = Answer(answer=answer, uploader=self.student, question=q_key)
+        a.put()
+        self.render('readstoryQandA.html', answers=[a])
+    
+
 # ===========
 # = MY DESK =
 # ===========
@@ -368,6 +430,8 @@ app = webapp2.WSGIApplication([
                                ('/?', Stories),
                                ('/addstory/?', AddStory),
                                ('/addvocab/?', AddVocab),
+                               ('/answerquestion/?', AnswerQuestion),
+                               ('/askquestion/?', AskQuestion),
                                ('/deletevocab/?', DeleteVocab),
                                ('/importvocab/?', ImportVocab),
                                ('/login/?', Login),
