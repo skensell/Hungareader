@@ -15,6 +15,9 @@
 
 {% block center %}
 
+{% if story_extras.has_unanswered_Q %}
+<p style="color: red"><i class="icon-exclamation-sign"></i>This story has some unanswered questions!</p>
+{% endif %}
 
 <h1>{{story.title}}</h1>
 <hr/>
@@ -163,7 +166,7 @@
 			<hr/>
 			<form action="/savecomments" method="post" accept-charset="utf-8">
 				<textarea id="comments_text" name="comments_text" maxlength="1000">
-					{{story.comments}}
+					{{story_extras.comments}}
 				</textarea>
 				<div id="comments_instructions">
 					<button type="submit" id="comments_save"><i class="icon-save"></i> save changes</button>

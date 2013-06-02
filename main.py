@@ -101,9 +101,6 @@ class Story(db.Model):
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
-    #comments should be a separate entity with parent Story
-    comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
-    
     
     @classmethod
     def most_recent(cls):
@@ -159,36 +156,66 @@ class VocabList(db.Model):
         return VocabList.all().filter("story =", story_key).run(limit=10)
     
 
-class Question(db.Model):
-    # always has a story as its parent
-    question = db.TextProperty(required=True)
-    uploader = db.ReferenceProperty(Student)
-    created = db.DateTimeProperty(auto_now_add=True)
-    # story = db.ReferenceProperty(Story) #This will now be a parent
-    
-    @classmethod
-    def by_story(cls, story_key):
-        return Question.all().ancestor(story_key).order('-created').run(limit=100)
-        #filter("story =", story_key).order('-created').run()
-    
-
 class Answer(db.Model):
     # always has a question as its parent
     answer = db.TextProperty(required=True)
     uploader = db.ReferenceProperty(Student)
-    #question = db.ReferenceProperty(Question) #This will now be a parent
     thanks = db.IntegerProperty(default=0)
     created = db.DateTimeProperty(auto_now_add=True)
     
     @classmethod
     def by_question(cls, q_key):
         return Answer.all().ancestor(q_key).order('created').run(limit=10)
-        #filter("question =", q_key).order('created').run(limit=10)
-
     
+    @classmethod
+    def one(cls, q_key):
+        return Answer.all().ancestor(q_key).get()
+        
+    @classmethod
+    def get_all_keys(cls, q_key):
+        return [a for a in Answer.all().ancestor(q_key).run(keys_only=True)]
+    
+
+class Question(db.Model):
+    # always has a story as its parent
+    question = db.TextProperty(required=True)
+    uploader = db.ReferenceProperty(Student)
+    created = db.DateTimeProperty(auto_now_add=True)
+    
+    @classmethod
+    def by_story(cls, story_key):
+        return Question.all().ancestor(story_key).order('-created').run(limit=100)
+    
+    @classmethod
+    def unanswered(cls, story_key):
+        """returns the unanswered Questions of a given story"""
+        Q = []
+        for q in Question.by_story(story_key):
+            if not Answer.one(q.key()):
+                Q.append(q)
+        return Q
+    
+
+class StoryExtras(db.Model):
+    # always has a parent Story
+    comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
+    has_unanswered_Q = db.BooleanProperty()
+    
+    @classmethod
+    def by_story(cls, story_key):
+        return StoryExtras.all().ancestor(story_key).get()
+    
+
+
+
 # ============
 # = HANDLERS =
 # ============
+
+class OneTimeUse(HandlerBase):
+    def get(self):
+        # code I want to execute once
+        self.write("Success!")
 
 # ===========
 # = STORIES =
@@ -225,6 +252,10 @@ class AddStory(HandlerBase):
             s = Story(title=title, summary=summary, text=text,
                 difficulty=difficulty, uploader=uploader)
             story_key = s.put()
+            
+            story_extras = StoryExtras(parent=story_key)
+            story_extras.put()
+            
             self.redirect("/%s"%story_key.id())
     
 
@@ -251,7 +282,10 @@ class ReadStory(HandlerBase):
             answers = [(a, encrypt(str(a.key()))) for a in Answer.by_question(q_key)]
             QandA.append((q, q_key_e, answers))
         
-        self.render("readstory.html", story=story, my_vocab=my_vocab, v_lists=v_lists, QandA=QandA)
+        story_extras = StoryExtras.by_story(story_key)
+        
+        self.render("readstory.html", story=story, my_vocab=my_vocab, v_lists=v_lists,
+                    QandA=QandA, story_extras=story_extras)
     
 
 
@@ -333,26 +367,42 @@ class ReorderVocab(HandlerBase):
 # = Q & A =
 # =========
 
-class AskQuestion(HandlerBase):
+class QandABase(HandlerBase):
     def post(self):
-        story = Story.by_id(int(self.request.get('story_id')))
+        self.story = Story.by_id(int(self.request.get('story_id')))
+        self.s_extras = StoryExtras.by_story(self.story.key())
+        
+        self.action()
+        
+    def action(self):
+        pass
+    
+
+class AskQuestion(QandABase):
+    def action(self):
         question = self.request.get('question')
         
-        q = Question(parent=story, question=question, uploader=self.student)
+        q = Question(parent=self.story, question=question, uploader=self.student)
         q.put()
         q_key_e = encrypt(str(q.key()))
+        
+        self.s_extras.has_unanswered_Q = True
+        self.s_extras.put()
         
         self.render('readstoryQandA.html', question=q, q_key_e=q_key_e)
     
 
-class DeleteQuestion(HandlerBase):
-    def post(self):
+class DeleteQuestion(QandABase):
+    def action(self):
         q_key_e = self.request.get('q_key_e')
         q_key = db.Key(decrypt(q_key_e))
+        a_keys = Answer.get_all_keys(q_key)
+        db.delete(a_keys)
+        db.delete(q_key)
     
 
-class AnswerQuestion(HandlerBase):
-    def post(self):
+class AnswerQuestion(QandABase):
+    def action(self):
         q_key_e = self.request.get('q_key_e')
         q_key = db.Key(decrypt(q_key_e))
         answer = self.request.get('answer')
@@ -360,10 +410,14 @@ class AnswerQuestion(HandlerBase):
         a = Answer(parent=q_key, answer=answer, uploader=self.student)
         a.put()
         
+        if self.s_extras.has_unanswered_Q and not Question.unanswered(self.story.key()):
+            self.s_extras.has_unanswered_Q = False
+            self.s_extras.put()
+        
         self.render('readstoryQandA.html', answers=[(a, encrypt(str(a.key())))])
     
 
-class IncrementThanks(HandlerBase):
+class IncrementThanks(QandABase):
     def post(self):
         a_key_e = self.request.get('a_key_e')
         a_key = db.Key(decrypt(a_key_e))
@@ -380,10 +434,11 @@ class IncrementThanks(HandlerBase):
 class SaveComments(HandlerBase):
     def post(self):
         story = Story.by_id(int(self.request.get('story_id')))
+        s_extras = StoryExtras.by_story(story.key())
         comments = self.request.get('comments_text')
         
-        story.comments = comments
-        story.put()
+        s_extras.comments = comments
+        s_extras.put()
 
 
 
@@ -472,6 +527,7 @@ app = webapp2.WSGIApplication([
                                ('/login/?', Login),
                                ('/logout/?', LogOut),
                                ('/mydesk/?', MyDesk),
+                               ('/onetimeuse/?', OneTimeUse),
                                ('/reordervocab/?', ReorderVocab),
                                ('/(\d+)', ReadStory),
                                ('/savecomments/?', SaveComments),

@@ -693,6 +693,9 @@ function deleteQuestion($QA_container){
             // delete the question and its answers
             return false;
         },
+        error: function(){
+            alert( "Sorry, there was a problem!");
+        },
     });
 }
 
@@ -718,7 +721,7 @@ function incrementThanks($thanks_link){
     $.ajax({
         url: '/incrementthanks',
         type: 'POST',
-        data: $.param({'a_key_e': a_key_e}),
+        data: $.param({'a_key_e': a_key_e, 'story_id': story_id}),
         success: function(){
             //increment the actual counter and disable the link
             $thanks_link.siblings('.thanks_counter').html(function(i,t){
