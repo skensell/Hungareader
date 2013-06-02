@@ -15,9 +15,20 @@ indexes:
   - name: question
   - name: created
 
+- kind: Answer
+  ancestor: yes
+  properties:
+  - name: created
+
 - kind: Question
   properties:
   - name: story
+  - name: created
+    direction: desc
+
+- kind: Question
+  ancestor: yes
+  properties:
   - name: created
     direction: desc
 

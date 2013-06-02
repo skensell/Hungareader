@@ -1,20 +1,31 @@
 Next:
 
-ReadStory:
-	-get the wall to work
+MyDesk:
+	- figure out how to query words
+	- figure out the temp list and quizes
+
+Stories and ReadStory:
+	- show stories which have unanswered questions
+	- put a number
+	
+AddStory:
+	- create a branch to test out how it would work without jHtmlArea
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
+	- maybe I should convert the stories to plain textareas rather than jHtmlArea before launch
 		
 		
 For the 2nd launch:
-	- add a hide meaning tab to my_vocab_tools which sets
-	 CSS opacity transparent on td:2nd child
+	- add a hide meaning tab to my_vocab_tools
 	- add a view_printable tab to my_vocab_tools
-	- Add location property to questions
-	- Scroll to answer after submitting an answer
+	- add location property to questions
+	- add ability to delete questions and answer posted by student
+	- scroll to answer after submitting an answer
 	
+	- maybe I should convert the stories to plain textareas rather than jHtmlArea
 	
+
 	
 	
 
@@ -25,6 +36,10 @@ Failures to return to:
 	to get the exact length of jHtmlArea to align with the other textareas I can
 	just fiddle with #story's width I think.
 
+	
+Cron jobs to run:
+	- Delete vocab which isn't being referred to.
+	- Update all the thanks at the end of the day and keep track of increment in memcache.
 	
 	
 	

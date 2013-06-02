@@ -272,7 +272,8 @@ function initQandA(){
     
     // show the answer form when clicking on "answer it!"
     $questions.on('click','a.answer_it', function(e){
-        $(this).parents('.meta_Q').siblings('form.answer_question').toggle();
+        $(this).closest('.meta_Q').siblings('form.answer_question').toggle()
+                .find('textarea.answer').focus();
 
         if ($(this).html() === 'answer it!' ){ $(this).html("don't answer it");}
         else {$(this).html('answer it!');}
@@ -302,6 +303,17 @@ function initQandA(){
         
         e.preventDefault(); 
     });
+    
+    $questions.on('click', 'a.delete_question', function(e){
+       var proceed = confirm('Are you sure you want to delete your question?');
+       if (!proceed){ return false;}
+       else{
+           var $QA_container = $(this).closest('.QA_container');
+           deleteQuestion($QA_container);
+       }
+       e.preventDefault(); 
+    });
+    
 }
 
 function initComments(){
@@ -668,6 +680,19 @@ function askQuestion($ask_question_form, $question){
             $question.val('');
         },
         error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
+    });
+}
+
+function deleteQuestion($QA_container){
+    var q_key_e = $QA_container.attr('id');
+    $.ajax({
+        url: 'deletequestion',
+        type: 'POST',
+        data: $.param({ 'q_key_e': q_key_e, 'story_id': story_id }),
+        success: function(){
+            // delete the question and its answers
+            return false;
+        },
     });
 }
 

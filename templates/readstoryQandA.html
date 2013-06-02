@@ -19,6 +19,10 @@
 			</div>
 			<div>
 				<a href="#" class="answer_it">answer it!</a>
+				{% if student.name == question.uploader.name %}
+				&nbsp; &nbsp;
+				<a href="#" class="delete_question">delete</a>
+				{% endif %}
 			</div>
 		</div>
 		

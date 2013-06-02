@@ -159,10 +159,10 @@
 		</div>
 		
 		<div id="comments">
-			<h3>Comments</h3>
+			<h3>Comments Wall</h3>
 			<hr/>
 			<form action="/savecomments" method="post" accept-charset="utf-8">
-				<textarea id="comments_text" name="comments_text">
+				<textarea id="comments_text" name="comments_text" maxlength="1000">
 					{{story.comments}}
 				</textarea>
 				<div id="comments_instructions">

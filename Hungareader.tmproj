@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>static/js/readstory.js</string>
+	<string>TODO.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,33 +21,47 @@
 	<integer>221</integer>
 	<key>metaData</key>
 	<dict>
+		<key>TODO.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>66</integer>
+				<key>line</key>
+				<integer>11</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>main.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>381</integer>
+				<integer>175</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>265</integer>
+			<integer>332</integer>
 		</dict>
 		<key>static/css/readstory.css</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>270</integer>
+				<integer>351</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>264</integer>
+			<integer>340</integer>
 		</dict>
 		<key>static/js/readstory.js</key>
 		<dict>
@@ -56,38 +70,39 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>505</integer>
+				<integer>257</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>11</integer>
+			<integer>10</integer>
 		</dict>
 		<key>templates/readstory.html</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>15</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>152</integer>
+				<integer>89</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>118</integer>
+			<integer>25</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>main.py</string>
 		<string>templates/readstory.html</string>
-		<string>static/js/readstory.js</string>
 		<string>static/css/readstory.css</string>
+		<string>static/js/readstory.js</string>
+		<string>main.py</string>
+		<string>TODO.txt</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{9, 72}, {908, 706}}</string>
+	<string>{{17, 73}, {942, 705}}</string>
 </dict>
 </plist>

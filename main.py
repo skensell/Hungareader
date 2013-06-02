@@ -101,6 +101,7 @@ class Story(db.Model):
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
+    #comments should be a separate entity with parent Story
     comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
     
     
@@ -159,30 +160,30 @@ class VocabList(db.Model):
     
 
 class Question(db.Model):
+    # always has a story as its parent
     question = db.TextProperty(required=True)
     uploader = db.ReferenceProperty(Student)
     created = db.DateTimeProperty(auto_now_add=True)
-    story = db.ReferenceProperty(Story)
+    # story = db.ReferenceProperty(Story) #This will now be a parent
     
     @classmethod
     def by_story(cls, story_key):
-        return Question.all().filter("story =", story_key).order('-created').run()
-    
-    # @classmethod
-    # def by_story_with_keys(cls, story_key):
-    #     q_with_keys
+        return Question.all().ancestor(story_key).order('-created').run(limit=100)
+        #filter("story =", story_key).order('-created').run()
     
 
 class Answer(db.Model):
+    # always has a question as its parent
     answer = db.TextProperty(required=True)
     uploader = db.ReferenceProperty(Student)
-    question = db.ReferenceProperty(Question)
+    #question = db.ReferenceProperty(Question) #This will now be a parent
     thanks = db.IntegerProperty(default=0)
     created = db.DateTimeProperty(auto_now_add=True)
     
     @classmethod
     def by_question(cls, q_key):
-        return Answer.all().filter("question =", q_key).order('created').run(limit=10)
+        return Answer.all().ancestor(q_key).order('created').run(limit=10)
+        #filter("question =", q_key).order('created').run(limit=10)
 
     
 # ============
@@ -337,11 +338,17 @@ class AskQuestion(HandlerBase):
         story = Story.by_id(int(self.request.get('story_id')))
         question = self.request.get('question')
         
-        q = Question(question=question, uploader=self.student, story=story)
+        q = Question(parent=story, question=question, uploader=self.student)
         q.put()
         q_key_e = encrypt(str(q.key()))
         
         self.render('readstoryQandA.html', question=q, q_key_e=q_key_e)
+    
+
+class DeleteQuestion(HandlerBase):
+    def post(self):
+        q_key_e = self.request.get('q_key_e')
+        q_key = db.Key(decrypt(q_key_e))
     
 
 class AnswerQuestion(HandlerBase):
@@ -349,10 +356,10 @@ class AnswerQuestion(HandlerBase):
         q_key_e = self.request.get('q_key_e')
         q_key = db.Key(decrypt(q_key_e))
         answer = self.request.get('answer')
-        story = Story.by_id(int(self.request.get('story_id')))
         
-        a = Answer(answer=answer, uploader=self.student, question=q_key)
+        a = Answer(parent=q_key, answer=answer, uploader=self.student)
         a.put()
+        
         self.render('readstoryQandA.html', answers=[(a, encrypt(str(a.key())))])
     
 
@@ -458,6 +465,7 @@ app = webapp2.WSGIApplication([
                                ('/addvocab/?', AddVocab),
                                ('/answerquestion/?', AnswerQuestion),
                                ('/askquestion/?', AskQuestion),
+                               ('/deletequestion/?', DeleteQuestion),
                                ('/deletevocab/?', DeleteVocab),
                                ('/importvocab/?', ImportVocab),
                                ('/incrementthanks/?', IncrementThanks),
