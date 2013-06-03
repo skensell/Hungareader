@@ -1,0 +1,9 @@
+<!-- Some commonly used html -->
+
+{% macro info_message(msg="This is an info box.") -%}
+<div class="info_message">
+	<div class="icon_container"><i class="icon-info-sign"></i></div>
+	<p>{{ msg }}</p>
+	<i class="icon-remove-sign close_this"></i>
+</div>
+{%- endmacro %}

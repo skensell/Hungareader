@@ -3,6 +3,13 @@
     margin-right: 1.3em;
 }
 
+#top_nav_container, #legend {
+    padding-left: .5em;
+}
+
+#legend p{
+    
+}
 
 
 /* ========================================= */
@@ -39,10 +46,24 @@ div.query_result.highlighted p.summary {
     color: black;
 }
 
+/* ============================= */
+/* = Structure of query result = */
+/* ============================= */
+
 .query_result h2.title {
+    display: inline-block;
     margin-top: 0px;
     margin-bottom: 0px;
 }
+.query_result div.icon_row{
+    display: inline-block;
+}
+
+.query_result div.icon_row > div {
+    display: inline-block;
+    margin-right: .5em;
+}
+
 
 .query_result ul.meta {
     padding-left: 0px;
@@ -63,11 +84,6 @@ div.query_result.highlighted p.summary {
     z-index: 2;
 }
 
-/* =================================== */
-/* = Bullet in front of student name = */
-/* =================================== */
-
-
 
 .query_result p.summary {
     margin-top: .25em;
@@ -75,9 +91,3 @@ div.query_result.highlighted p.summary {
     font-weight: 300;
     color: #666666;
 }
-
-.query_result a.add_to_reading_list {
-    position: relative;
-    z-index: 2;
-}
-

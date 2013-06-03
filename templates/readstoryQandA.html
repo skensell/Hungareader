@@ -60,6 +60,10 @@
 			<div>
 				<span class="thanks_counter">{{answer.thanks}}</span> 
 				have said <a href="#" class="thanks">thanks!</a>
+				{% if answer.uploader.name == student.name %}
+				&nbsp; &nbsp;
+				<a href="#" class="delete_answer">delete</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>

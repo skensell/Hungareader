@@ -1,12 +1,13 @@
 Next:
 
+Stories:
+	- Fix stories.html by figuring out queries.
+	- Remove queries I won't actually be using
+	- Add a query for "unanswered questions"
+
 MyDesk:
 	- figure out how to query words
 	- figure out the temp list and quizes
-
-Stories and ReadStory:
-	- show stories which have unanswered questions
-	- put a number
 	
 AddStory:
 	- create a branch to test out how it would work without jHtmlArea

@@ -5,8 +5,6 @@ $(document).ready(function(){
 
     if (!checkIfLoggedIn()){return false;}
     
-    makeTabs(); // makes ul.tabs.classic and ul.tabs.fade
-    
     initVocabArea();
 });
 
@@ -46,90 +44,6 @@ function checkIfLoggedIn(){
         return false;
     }
     return true;
-}
-
-// I should put this as a tabs plugin and use a separate script tag
-function makeTabs(){
-    // makes tabs with a fading transition
-    $('ul.tabs.fade').each(function(){
-      // For each set of tabs, we want to keep track of
-      // which tab is active and it's associated content
-      var $active, $content, $links = $(this).find('a');
-
-      // If the location.hash matches one of the links, use that as the active tab.
-      // If no match is found, use the first link as the initial active tab.
-      $active = $($links.filter('[href="'+location.hash+'"]')[0] || $links[0]);
-      $active.addClass('active');
-      $content = $($active.attr('href'));
-
-      // Hide the remaining content
-      $links.not($active).each(function () {
-        $($(this).attr('href')).hide();
-      });
-
-      // Bind the click event handler
-      $(this).on('click', 'a', function(e){
-        // If the clicked tab is active, do nothing
-        if ($(this).hasClass('active')) {
-            return false;
-        } else {
-        
-            var $clicked = $(this);
-            var fade_in_new_active = function(){
-                // Update the variables with the new link and content
-                $active = $clicked;
-                $content = $($clicked.attr('href'));
-                $active.addClass('active');
-                $content.fadeIn('fast');
-            }
-        
-            //Remove active class from old tab
-            $active.removeClass('active');
-            $content.fadeOut('fast', fade_in_new_active);
-
-            // Prevent the anchor's default click action
-            e.preventDefault();
-        }
-      });
-    });
-    
-    // makes tabs which have a normal transition
-    $('ul.tabs.classic').each(function(){
-      // For each set of tabs, we want to keep track of
-      // which tab is active and it's associated content
-      var $active, $content, $links = $(this).find('a');
-
-      // If the location.hash matches one of the links, use that as the active tab.
-      // If no match is found, use the first link as the initial active tab.
-      $active = $($links.filter('[href="'+location.hash+'"]')[0] || $links[0]);
-      $active.addClass('active');
-      $content = $($active.attr('href'));
-
-      // Hide the remaining content
-      $links.not($active).each(function () {
-        $($(this).attr('href')).hide();
-      });
-
-      // Bind the click event handler
-      $(this).on('click', 'a', function(e){
-        // If the clicked tab is active, do nothing
-        if ($(this).hasClass('active')) {
-            return false;
-        } else {
-            $active.removeClass('active');
-            $content.hide();
-            
-            $active = $(this);
-            $content = $($active.attr('href'));
-            
-            $active.addClass('active');
-            $content.show();
-
-            // Prevent the anchor's default click action
-            e.preventDefault();
-        }
-      });
-    });
 }
 
 function initVocabArea(){
@@ -314,6 +228,15 @@ function initQandA(){
        e.preventDefault(); 
     });
     
+    $questions.on('click', 'a.delete_answer', function(e){
+        var proceed = confirm('Are you sure you want to delete your answer?');
+        if (!proceed){ return false;}
+        else{
+            var $A_container = $(this).closest('.A_container');
+            deleteAnswer($A_container);
+        }
+        e.preventDefault();
+    });
 }
 
 function initComments(){
@@ -690,8 +613,7 @@ function deleteQuestion($QA_container){
         type: 'POST',
         data: $.param({ 'q_key_e': q_key_e, 'story_id': story_id }),
         success: function(){
-            // delete the question and its answers
-            return false;
+            $QA_container.remove();
         },
         error: function(){
             alert( "Sorry, there was a problem!");
@@ -714,6 +636,21 @@ function answerQuestion($answer_form, $answer, q_key_e){
         },
         error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
     });
+}
+
+function deleteAnswer($A_container){
+    var a_key_e = $A_container.attr('id');
+    $.ajax({
+        url: 'deleteanswer',
+        type: 'POST',
+        data: $.param({ 'a_key_e': a_key_e, 'story_id': story_id }),
+        success: function(){
+            $A_container.remove();
+        },
+        error: function(){
+            alert( "Sorry, there was a problem!");
+        },
+    });    
 }
 
 function incrementThanks($thanks_link){

@@ -9,25 +9,34 @@
 {% endblock %}
 
 {%block center %}
-<a class="top_nav" href="/">most recent</a>
-<a class="top_nav disabled" href="/">most read</a>
-<a class="top_nav disabled" href="/">highest rated</a>     
-<a class="top_nav disabled" href="/">tracks</a>	     
-<a class="top_nav disabled" href="/">tags</a>
-<br>
-<br>
+<div id="top_nav_container">
+	<a class="top_nav" href="/">most recent</a>
+	<a class="top_nav disabled" href="/">most read</a>
+	<a class="top_nav disabled" href="/">highest rated</a>     
+	<a class="top_nav disabled" href="/">tracks</a>	     
+	<a class="top_nav disabled" href="/">tags</a>
+</div>
+<div id="legend">
+	<p><span class="red">Q</span> : story has unanswered questions</p>
+</div>
 
-{% for story in most_recent %}
+{% for (story, s_extras) in most_recent %}
 <div class="query_result">
 	<a href="/{{story.key().id()}}"><span class="make_clickable"></span></a>
-	<h2 class="title">{{story.title}}</h2>
+	<div class="title_row">
+		<h2 class="title">{{story.title}}</h2>
+		<div class="icon_row">
+			{% if s_extras.has_unanswered_Q %}
+			<div class="red">&nbsp;Q</div>
+			{% endif %}
+		</div>
+	</div>
 	<ul class="meta">
 		<li>{{story.difficulty}}</li>
-		<li>Uploaded by <span class="student_level {{story.uploader.level}}">&bull;</span><a class="uploader_name
+		<li>Uploaded by <a class="uploader_name student_level {{story.uploader.level}}
 			disabled" href="/">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
 	</ul>
 	<p class="summary">{{story.summary}}</p>
-	<a class="add_to_reading_list disabled" href="/">add to reading list</a>
 </div>
 {% endfor %}
 

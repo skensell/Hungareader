@@ -26,9 +26,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>66</integer>
+				<integer>41</integer>
 				<key>line</key>
-				<integer>11</integer>
+				<integer>5</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -40,69 +40,85 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>23</integer>
+				<integer>30</integer>
 				<key>line</key>
-				<integer>175</integer>
+				<integer>213</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>332</integer>
+			<integer>96</integer>
 		</dict>
-		<key>static/css/readstory.css</key>
+		<key>static/css/stories.css</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>351</integer>
+				<integer>10</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>340</integer>
+			<integer>0</integer>
 		</dict>
-		<key>static/js/readstory.js</key>
+		<key>templates/stories.html</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>257</integer>
+				<integer>13</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>10</integer>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>46</integer>
+				<key>line</key>
+				<integer>16</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>13</integer>
+			</dict>
 		</dict>
-		<key>templates/readstory.html</key>
+		<key>templates/storiesbase.html</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>23</integer>
+				<integer>27</integer>
 				<key>line</key>
-				<integer>89</integer>
+				<integer>12</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>25</integer>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>templates/readstory.html</string>
-		<string>static/css/readstory.css</string>
-		<string>static/js/readstory.js</string>
-		<string>main.py</string>
+		<string>templates/stories.html</string>
+		<string>static/css/stories.css</string>
+		<string>templates/storiesbase.html</string>
 		<string>TODO.txt</string>
+		<string>main.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{17, 73}, {942, 705}}</string>
+	<string>{{23, 73}, {942, 705}}</string>
 </dict>
 </plist>

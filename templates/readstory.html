@@ -16,7 +16,10 @@
 {% block center %}
 
 {% if story_extras.has_unanswered_Q %}
-<p style="color: red"><i class="icon-exclamation-sign"></i>This story has some unanswered questions!</p>
+	{% from 'macros.html' import info_message %}
+	
+	{{ info_message("This story has some unanswered questions.
+		Visit the Q&A to help a fellow Hungarian student out!")}}
 {% endif %}
 
 <h1>{{story.title}}</h1>
@@ -181,7 +184,7 @@
 	<ul class="tabs fade">
 		<li><a id="my_vocab_link" href="#my_vocab">My Vocab</a></li>
 		<li><a href="#user_vocab">User Vocab</a></li>
-		<li><a href="#QandA">Q &amp A</a></li>
+		<li><a href="#QandA">Q &amp; A</a></li>
 		<li><a href="#comments">Comments</a></li>
 	</ul>
 	<a id="hide_vocab" href="#hide_vocab">Hide</a>

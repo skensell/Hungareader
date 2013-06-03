@@ -104,7 +104,7 @@ class Story(db.Model):
     
     @classmethod
     def most_recent(cls):
-        return Story.all().order('-created').run(limit=10)
+        return Story.all().order('-created').run(limit=50)
     
     @classmethod
     def by_id(cls, sid):
@@ -207,6 +207,16 @@ class StoryExtras(db.Model):
     
 
 
+# ===========
+# = QUERIES =
+# ===========
+
+def recent_stories_w_extras():
+    S = []
+    for s in Story.most_recent():
+        s_extras = StoryExtras.by_story(s.key())
+        S.append((s, s_extras))
+    return S
 
 # ============
 # = HANDLERS =
@@ -225,7 +235,7 @@ class OneTimeUse(HandlerBase):
 
 class Stories(HandlerBase):
     def get(self):
-        most_recent = Story.most_recent()
+        most_recent = recent_stories_w_extras();
         self.render('stories.html', most_recent=most_recent)    
     
 
@@ -377,6 +387,20 @@ class QandABase(HandlerBase):
     def action(self):
         pass
     
+    def update_unanswered(self, new_q=False):
+        were_unanswered = self.s_extras.has_unanswered_Q
+        unanswered_Qs = Question.unanswered(self.story.key())
+        if new_q:
+            self.s_extras.has_unanswered_Q = True
+            self.s_extras.put()
+        elif were_unanswered and not unanswered_Qs:
+            self.s_extras.has_unanswered_Q = False
+            self.s_extras.put()
+        elif not were_unanswered and unanswered_Qs:
+            self.s_extras.has_unanswered_Q = True
+            self.s_extras.put()
+        
+    
 
 class AskQuestion(QandABase):
     def action(self):
@@ -386,8 +410,7 @@ class AskQuestion(QandABase):
         q.put()
         q_key_e = encrypt(str(q.key()))
         
-        self.s_extras.has_unanswered_Q = True
-        self.s_extras.put()
+        self.update_unanswered(new_q=True)
         
         self.render('readstoryQandA.html', question=q, q_key_e=q_key_e)
     
@@ -399,6 +422,8 @@ class DeleteQuestion(QandABase):
         a_keys = Answer.get_all_keys(q_key)
         db.delete(a_keys)
         db.delete(q_key)
+        
+        self.update_unanswered()
     
 
 class AnswerQuestion(QandABase):
@@ -410,11 +435,19 @@ class AnswerQuestion(QandABase):
         a = Answer(parent=q_key, answer=answer, uploader=self.student)
         a.put()
         
-        if self.s_extras.has_unanswered_Q and not Question.unanswered(self.story.key()):
-            self.s_extras.has_unanswered_Q = False
-            self.s_extras.put()
+        self.update_unanswered()
         
         self.render('readstoryQandA.html', answers=[(a, encrypt(str(a.key())))])
+    
+
+class DeleteAnswer(QandABase):
+    def action(self):
+        a_key = db.Key(decrypt(self.request.get('a_key_e')))
+        
+        db.delete(a_key)
+        
+        self.update_unanswered()
+            
     
 
 class IncrementThanks(QandABase):
@@ -520,6 +553,7 @@ app = webapp2.WSGIApplication([
                                ('/addvocab/?', AddVocab),
                                ('/answerquestion/?', AnswerQuestion),
                                ('/askquestion/?', AskQuestion),
+                               ('/deleteanswer/?', DeleteAnswer),
                                ('/deletequestion/?', DeleteQuestion),
                                ('/deletevocab/?', DeleteVocab),
                                ('/importvocab/?', ImportVocab),

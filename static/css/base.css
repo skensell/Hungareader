@@ -121,6 +121,7 @@ input[type=submit]:hover, button:hover {
 }
 
 input[type=submit].red, button.red {
+    color: white;
     border: 1px solid #CC0216;
     background: #ce1126; /* Old browsers */
     background: -moz-radial-gradient(center, ellipse cover,  #ce1126 61%, #f96161 89%); /* FF3.6+ */
@@ -173,6 +174,9 @@ div.error {
     color: #ce1126;
 }
 
+.red {
+    color: #ce1126;
+}
 
 /*a.disabled { color: #a1a1a1;}*/
 a.disabled:hover{ text-decoration: none; cursor: default;}
@@ -318,3 +322,41 @@ a.language {
     color: #323232;
 }
 
+
+/* ================= */
+/* = Info Messages = */
+/* ================= */
+
+
+div.info_message {
+    position: relative;
+    border: 1px solid gold;
+    border-radius: 4px;
+    color: #846715;
+    background-color: #f9f1da;
+}
+
+div.info_message div.icon_container{
+    display: inline-block;
+    vertical-align: top;
+    padding: .5em .5em;
+    font-size: 1.5em;
+}
+div.info_message p{
+    display: inline-block;
+    vertical-align: center;
+    width: 80%;
+    color: #846715;
+}
+
+div.info_message i.close_this{
+    position: absolute;
+    top: .2em;
+    right: .2em;
+    color: #eed796;
+    font-size: 1.5em;
+}
+div.info_message i.close_this.highlighted{
+    color: #846715;
+    cursor: pointer;
+}
