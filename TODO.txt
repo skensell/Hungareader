@@ -17,7 +17,7 @@ General:
 	- maybe I should convert the stories to plain textareas rather than jHtmlArea before launch
 		
 		
-For the 2nd launch:
+Ideas for the 2nd launch:
 	- add a hide meaning tab to my_vocab_tools
 	- add a view_printable tab to my_vocab_tools
 	- add location property to questions
