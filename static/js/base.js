@@ -96,3 +96,52 @@ function makeInfoMessages(){
        }, 
     });
 }
+
+// window.readCookie
+(function(){
+    // returns undefined if no student
+    var cookies;
+
+    function readCookie(name,c,C,i){
+        if(cookies){ return cookies[name]; }
+
+        c = document.cookie.split('; ');
+        cookies = {};
+
+        for(i=c.length-1; i>=0; i--){
+           C = c[i].split('=');
+           cookies[C[0]] = C[1];
+        }
+
+        return cookies[name];
+    }
+
+    window.readCookie = readCookie;
+})();
+
+// window.isLoggedIn
+window.isLoggedIn = (window.readCookie('student_id') !== undefined);
+
+// window.getQueryParam
+(function(){
+    // Doesn't URL-decode, but that could be done
+    var query_params;
+    
+    function getQueryParam(name){
+        if (query_params){return query_params[name];}
+        
+        query_params = {};
+        var q_string = window.location.search.slice(1);
+        var each_param = q_string.split('&');
+        
+        for (var i = 0; i < each_param.length; i++){
+            var P = each_param[i].split('=');
+            query_params[P[0]] = P[1];       
+        }
+        
+        return query_params[name]
+    }
+    
+    window.getQueryParam = getQueryParam;
+    
+})();

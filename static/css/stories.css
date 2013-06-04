@@ -3,12 +3,21 @@
     margin-right: 1.3em;
 }
 
+
+.top_nav.chosen, .left_nav.chosen {
+/*    border: 1px solid #68c29e;*/
+    font-weight: 700;
+    color: #20865d;
+/*    background-color: #d4ede3;*/
+}
+
 #top_nav_container, #legend {
     padding-left: .5em;
 }
 
 #legend p{
-    
+    font-weight: 400;
+    color: #666666;
 }
 
 

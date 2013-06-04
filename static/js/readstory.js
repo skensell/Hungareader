@@ -3,48 +3,20 @@ $(document).ready(function(){
     window.story_id = window.location.pathname.slice(1);
     window.$my_vocab_tbody = $('#my_vocab #my_vocab_table tbody');
 
-    if (!checkIfLoggedIn()){return false;}
-    
-    initVocabArea();
-});
-
-
-function checkIfLoggedIn(){
-    
-    // compiles a window.readCookie function
-    // window.readCookie("student_id") returns undefined if no student
-    (function(){
-        var cookies;
-
-        function readCookie(name,c,C,i){
-            if(cookies){ return cookies[name]; }
-
-            c = document.cookie.split('; ');
-            cookies = {};
-
-            for(i=c.length-1; i>=0; i--){
-               C = c[i].split('=');
-               cookies[C[0]] = C[1];
-            }
-
-            return cookies[name];
-        }
-
-        window.readCookie = readCookie; // or expose it however you want
-    })();
-    
-    var is_logged_in = (window.readCookie('student_id') !== undefined);
     
     // What to show if not logged in
-    if (is_logged_in === false) {
+    if (!window.isLoggedIn) {
         $('div#vocab_area_container').html('<p>Log in to create your own personal vocabulary' + 
                                             ' list for this story ' +
                                             'and browse lists created by other students.</p>');
         $('div#right_tool_bar').hide();
         return false;
     }
-    return true;
-}
+    
+    
+    initVocabArea();
+});
+
 
 function initVocabArea(){
     var vocab_area = $('div#vocab_area_container').get(0);

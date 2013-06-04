@@ -104,7 +104,7 @@ class Story(db.Model):
     
     @classmethod
     def most_recent(cls):
-        return Story.all().order('-created').run(limit=50)
+        return Story.all().order('-created')
     
     @classmethod
     def by_id(cls, sid):
@@ -211,11 +211,22 @@ class StoryExtras(db.Model):
 # = QUERIES =
 # ===========
 
-def recent_stories_w_extras():
+def retrieve_stories_w_extras(type_filter='most_recent', difficulty='all'):
     S = []
-    for s in Story.most_recent():
+    
+    stories_q = Story.most_recent()
+    if difficulty != 'all':
+        stories_q.filter('difficulty =', difficulty)
+    
+    for s in stories_q.run(limit=50):
         s_extras = StoryExtras.by_story(s.key())
-        S.append((s, s_extras))
+        
+        if type_filter == 'most_recent':
+            S.append((s,s_extras))
+        elif type_filter == 'unanswered':
+            if s_extras.has_unanswered_Q:
+                S.append((s,s_extras))
+                
     return S
 
 # ============
@@ -231,12 +242,15 @@ class OneTimeUse(HandlerBase):
 # = STORIES =
 # ===========
 
-# Note: There are keys-only queries I could be implementing.
-
 class Stories(HandlerBase):
     def get(self):
-        most_recent = recent_stories_w_extras();
-        self.render('stories.html', most_recent=most_recent)    
+        type_filter = self.request.get('type_filter') or 'most_recent'
+        difficulty = self.request.get('difficulty') or 'all'
+        
+        stories_w_extras = retrieve_stories_w_extras(type_filter, difficulty);
+        
+        self.render('stories.html', stories_w_extras=stories_w_extras, type_filter=type_filter,
+                    difficulty=difficulty)    
     
 
 class AddStory(HandlerBase):

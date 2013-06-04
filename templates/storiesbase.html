@@ -7,10 +7,10 @@
 {% block left_side %}
 <h1>Stories</h1>
 
-<a class="left_nav" href="/">all</a>
-<a class="left_nav disabled" href="/">beginner</a>
-<a class="left_nav disabled" href="/">intermediate</a>
-<a class="left_nav disabled" href="/">advanced</a>
+<a class="left_nav chosen" id="all" href="/?type_filter={{type_filter}}&amp;difficulty=all">all</a>
+<a class="left_nav" id="Beginner" href="/?type_filter={{type_filter}}&amp;difficulty=Beginner">beginner</a>
+<a class="left_nav" id="Intermediate" href="/?type_filter={{type_filter}}&amp;difficulty=Intermediate">intermediate</a>
+<a class="left_nav" id="Advanced" href="/?type_filter={{type_filter}}&amp;difficulty=Advanced">advanced</a>
 
 <a class="left_nav" id="add_story" href="/addstory">add a story</a>
 {% endblock %}

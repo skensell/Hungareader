@@ -10,17 +10,25 @@
 
 {%block center %}
 <div id="top_nav_container">
-	<a class="top_nav" href="/">most recent</a>
-	<a class="top_nav disabled" href="/">most read</a>
+	<a class="top_nav chosen" id="most_recent"
+	 href="/?type_filter=most_recent&amp;difficulty={{difficulty}}">most recent</a>
+	<a class="top_nav" id="unanswered"
+	 href="/?type_filter=unanswered&amp;difficulty={{difficulty}}">unanswered Qs</a>
+	<!-- 
+		Queries for the future:
+		
+		<a class="top_nav disabled" href="/">most read</a>
 	<a class="top_nav disabled" href="/">highest rated</a>     
 	<a class="top_nav disabled" href="/">tracks</a>	     
-	<a class="top_nav disabled" href="/">tags</a>
+	<a class="top_nav disabled" href="/">tags</a> 
+	
+	-->
 </div>
 <div id="legend">
-	<p><span class="red">Q</span> : story has unanswered questions</p>
+	<p><span class="red">Q</span> - story has unanswered questions</p>
 </div>
 
-{% for (story, s_extras) in most_recent %}
+{% for (story, s_extras) in stories_w_extras %}
 <div class="query_result">
 	<a href="/{{story.key().id()}}"><span class="make_clickable"></span></a>
 	<div class="title_row">
@@ -34,7 +42,7 @@
 	<ul class="meta">
 		<li>{{story.difficulty}}</li>
 		<li>Uploaded by <a class="uploader_name student_level {{story.uploader.level}}
-			disabled" href="/">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
+			disabled">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
 	</ul>
 	<p class="summary">{{story.summary}}</p>
 </div>

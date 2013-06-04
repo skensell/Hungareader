@@ -32,6 +32,12 @@ indexes:
   - name: created
     direction: desc
 
+- kind: Story
+  properties:
+  - name: difficulty
+  - name: created
+    direction: desc
+
 - kind: VocabList
   properties:
   - name: story

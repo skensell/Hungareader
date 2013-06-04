@@ -1,20 +1,24 @@
 Next:
 
-Stories:
-	- Fix stories.html by figuring out queries.
-	- Remove queries I won't actually be using
-	- Add a query for "unanswered questions"
+AddStory:
+	- create a branch to test out how it would work without jHtmlArea
 
 MyDesk:
 	- figure out how to query words
 	- figure out the temp list and quizes
-	
-AddStory:
-	- create a branch to test out how it would work without jHtmlArea
+
+main.py:
+	- cache every query.
+
+Welcome:
+	- create a welcome page for not-logged-in users
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
-	- maybe I should convert the stories to plain textareas rather than jHtmlArea before launch
+		
+		
+		
+		
 		
 		
 Ideas for the 2nd launch:
