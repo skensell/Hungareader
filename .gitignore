@@ -1,8 +1,5 @@
 # Files which should never be committed
 
-utilities/secrets.py
-
-
 # General Python stuff which doesn't need to be committed
 
 *.py[cod]
