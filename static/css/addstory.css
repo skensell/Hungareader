@@ -2,6 +2,7 @@
 input, textarea, form > div {
     width: 35em;
     display: block;
+    padding-right: .5em;
 }
 
 label {

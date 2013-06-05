@@ -3,10 +3,7 @@
 <div class="QA_container" id="{{q_key_e}}">
 	<div class="Q_container">
 		<hr/>
-		<p>
-			<span class="big_Q">Q</span>
-			{{question.question}}
-		</p>
+		<p class="question_text"><span class="big_Q">Q</span> {{question.question}}</p>
 		
 		<div class="meta_Q">
 			<div>
@@ -46,10 +43,7 @@
 
 {% for (answer, a_key_e) in answers %}
 	<div class="A_container" id="{{a_key_e}}">
-		<p>
-			<span class="big_A">A</span>
-			{{answer.answer}}
-		</p>
+		<p class="answer_text"><span class="big_A">A</span> {{answer.answer}}</p>
 		<div class="meta_A">
 			<div>
 				<a class="student_level

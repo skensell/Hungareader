@@ -326,7 +326,9 @@ div#QandA .QA_container {
     margin-bottom: 2em;
 }
 
-
+div#QandA p.question_text, div#QandA p.answer_text {
+    white-space: pre-wrap;
+}
 
 
 
