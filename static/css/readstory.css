@@ -19,6 +19,11 @@
 /* = Story text = */
 /* ============== */
 
+p#story_text {
+    /*It's impossible to justify text this way.*/
+    white-space: pre-wrap;
+}
+
 p {
     text-align: justify;
 }

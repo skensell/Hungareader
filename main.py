@@ -287,6 +287,7 @@ class ReadStory(HandlerBase):
     def get(self, story_id):
         story = Story.by_id(int(story_id))
         story_key = story.key()
+        # logging.info([story.text])
         
         my_vocab = []
         if self.student:
