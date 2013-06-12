@@ -207,6 +207,7 @@ class StoryExtras(db.Model):
     
 
 
+
 # ===========
 # = QUERIES =
 # ===========
@@ -237,6 +238,8 @@ class OneTimeUse(HandlerBase):
     def get(self):
         # code I want to execute once
         self.write("Success!")
+    
+
 
 # ===========
 # = STORIES =
@@ -385,6 +388,9 @@ class ReorderVocab(HandlerBase):
         
         vl.vocab_list = keys
         vl.put()
+    
+
+
 
 
 
@@ -414,7 +420,6 @@ class QandABase(HandlerBase):
         elif not were_unanswered and unanswered_Qs:
             self.s_extras.has_unanswered_Q = True
             self.s_extras.put()
-        
     
 
 class AskQuestion(QandABase):
@@ -462,7 +467,6 @@ class DeleteAnswer(QandABase):
         db.delete(a_key)
         
         self.update_unanswered()
-            
     
 
 class IncrementThanks(QandABase):
@@ -472,7 +476,8 @@ class IncrementThanks(QandABase):
         a = db.get(a_key)
         a.thanks += 1
         a.put()
-        
+    
+
 
 
 # ============
@@ -487,6 +492,8 @@ class SaveComments(HandlerBase):
         
         s_extras.comments = comments
         s_extras.put()
+    
+
 
 
 
@@ -502,6 +509,7 @@ class MyDesk(HandlerBase):
             self.redirect('/login')
         else:
             self.render("mydesk.html")
+    
 
 
 # =========================

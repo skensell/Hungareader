@@ -55,7 +55,7 @@ function initMyVocab(vocab_area){
         } 
         else if (active_tool && (active_tool.mode === 'edit') && !active_tool.chosen.length){
             // this would be better placed in edit_tool.bind_events somehow
-            show_error('Please select something to edit.');
+            show_error('Please select something to edit or exit edit mode.');
         }
         else if (active_tool && (active_tool.mode !== 'edit')){
             alert('Somehow youre still in ' + active_tool.mode + ' mode.');
