@@ -42,3 +42,9 @@ indexes:
   properties:
   - name: story
   - name: created
+
+- kind: VocabList
+  properties:
+  - name: student
+  - name: created
+    direction: desc

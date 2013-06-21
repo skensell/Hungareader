@@ -3,59 +3,73 @@
 {% block head %}
 <!-- I could abstract the next row so that I have another head block in storiesbase.html -->
 <link rel="stylesheet" href="/static/css/mydesk.css" type="text/css" media="screen" charset="utf-8">
-<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/static/js/mydesk.js"></script>
 {% endblock %}
 
 
-{% block left_side %}
-<h1>My Desk</h1>
+{% block topline %}
+<h1 id="topline_mydesk">My Desk</h1>
 
-<!-- The three below will be tabs -->
-<a class="left_nav" href="#vocab">vocabulary</a>
-<a class="left_nav" href="#stories">stories read</a>
-<a class="left_nav" href="#notes">notes</a>
+{% if not stories %}
+	{% from 'macros.html' import info_message %}
 
-<a class="left_nav" id="my_profile" href="/myprofile">my profile</a>
-<a class="left_nav" id="leaderboard" href="/leaderboard">leaderboard</a>
+	{{ info_message("Once you have some vocabulary you can come here to review your words.")}}
+{% else %}
+
+<form id="review_vocab" action="/reviewvocab" method="get" accept-charset="utf-8">
+	<p> Show
+	<select name="num_words" id="num_words" size="1">
+		<option value="1">1</option>
+		<option value="5">5</option>
+		<option value="10">10</option>
+		<option value="20">20</option>
+		<option value="50">50</option>
+		<option value="100">100</option>
+		<option value="500">500</option>
+		<option value="all">all</option>
+	</select>
+	words
+	<select name="random_or_not" id="random_or_not" size="1">
+		<option value="random">randomly chosen</option>
+		<option value="in_order">in order added</option>
+	</select>
+	from
+	<select name="which_stories" id="which_stories" multiple style="height: 5em; vertical-align:top">
+		
+		{% for (s, s_key_e) in stories %}
+		<option value="{{s_key_e}}">{{s.title}}</option>
+		{% endfor %}
+		
+	</select>
+	<input type="submit" id="go_button" value="GO">
+	</p>
+</form>
+
+
+{% endif %}
 {% endblock %}
+
+
+
 
 {%block center %}
-<div id="#vocab">
-	<form action="mydesk_submit" method="get" accept-charset="utf-8">
-		<p> Show
-		<select name="how_many_words" id="how_many_words" size="1">
-			<option value="20">20</option>
-			<option value="100">100</option>
-			<option value="500">500</option>
-		</select>
-		words
-		<select name="random_or_not" id="random_or_not" size="1">
-			<option value="random">randomly chosen</option>
-			<option value="in_order">in order added</option>
-		</select>
-		from
-		<select name="which_story" id="which_story" multiple style="height: 5em; vertical-align: bottom">
-			<option value="story_id">A kórházban</option>
-			<option value="story_id">Harry Potter részlet</option>
-			<option value="story_id">A Só</option>
-		</select>
-		<input type="submit" id="retrieve_vocab" value="GO">
-		</p>
-	</form>
-</div>
+<table id="my_vocab_table" class="vocab_list" border="1">
+	<tbody>
+	{% for (v, v_key_e) in my_vocab %}
+		<tr id="{{v_key_e}}"><td>{{v.hungarian}}</td><td>{{v.meaning}}</td></tr>
+	{% endfor %}
+	</tbody>
+</table>
 
-<div id="#stories">
-	<!-- Past, Present, and Reading List -->
-</div>
-
-<div id="#notes">
-	<!-- View per story and all -->
-</div>
 
 {% endblock %}
+
+
+
+
+
 {% block right_side %}
-<h3>Quiz me!</h3>
+<h3>The temporary list.</h3>
 
 
 

@@ -6,6 +6,8 @@
 	
 	
  	<link rel="stylesheet" href="/static/css/base.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css"
+	 type="text/css" media="screen" charset="utf-8">
 
 	<!-- include Lobster font -->
 	<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
@@ -17,12 +19,12 @@
 	
 </head>
 <body>
-	<div>
+	<!-- <div>
 		<div id="language_select">
 			<a class="language">magyarul</a>
 		</div>
-		<div class="clear"></div> <!-- this gives the containing div height	-->
-	</div>
+		<div class="clear"></div>
+	</div> -->
 	
 	<div class="header">
 		<div id="logo">
@@ -48,6 +50,9 @@
 	</div>
 	
 	<div id="content_container">
+		<div id="topline">
+			{% block topline %}{% endblock %}
+		</div>
 		<div id="left" class="content">
 			{% block left_side %}{% endblock %}
 		</div><!-- inline block

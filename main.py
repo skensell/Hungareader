@@ -1,7 +1,7 @@
 #framework stuff
 import webapp2
 import jinja2
-import os, re
+import os, re, random
 
 #for db storage and serialization
 import json
@@ -131,7 +131,7 @@ class Vocab(db.Model):
     
     @classmethod
     def words_and_keys(cls, vocab_list):
-        """Takes a vocab_list of keys and returns a list of tuples (v, v_key_e) where
+        """Takes a vocab_list object and returns a list of tuples (v, v_key_e) where
         v is the vocab instance and v_key_e is the encrypted key for that instance."""
         if not vocab_list:
             return []
@@ -156,6 +156,10 @@ class VocabList(db.Model):
     def by_story(cls, story_key):
         # order this by created
         return VocabList.all().filter("story =", story_key).run(limit=10)
+    
+    @classmethod
+    def by_student(cls, student_key):
+        return VocabList.all().filter("student =", student_key).order('-created').run(limit=100)
     
 
 class Answer(db.Model):
@@ -272,9 +276,9 @@ class AddStory(HandlerBase):
             self.render("addstory.html")
     
     def post(self):
-        title = self.request.get('title')
-        summary = self.request.get('summary')
-        text = self.request.get('story')
+        title = self.request.get('title').strip()
+        summary = self.request.get('summary').strip()
+        text = self.request.get('story').rstrip()
         difficulty = self.request.get('difficulty')
         
         error_msg = "Title, story, and difficulty are all required fields."
@@ -510,15 +514,41 @@ class SaveComments(HandlerBase):
 # = MY DESK =
 # ===========
 
+class MyDeskBase(HandlerBase):
+    def initialize(self, *a, **kw):
+        HandlerBase.initialize(self, *a, **kw)
+        self.v_lists = self.student and [vl for vl in VocabList.by_student(self.student.key()) if vl.vocab_list]
+        self.stories = self.student and [(vl.story, encrypt(str(vl.story.key()))) for vl in self.v_lists]
+    
 
-class MyDesk(HandlerBase):
+class MyDesk(MyDeskBase):
     def get(self):
         if not self.student: 
             self.redirect('/login')
         else:
-            self.render("mydesk.html")
+            self.render("mydesk.html", stories=self.stories)
     
 
+class ReviewVocab(MyDeskBase):
+    def get(self):
+        num_words = self.request.get('num_words')
+        if num_words != 'all':
+            num_words = int(num_words)
+        random_or_not = self.request.get('random_or_not')
+        which_stories = map(db.Key, map(decrypt, self.request.get_all('which_stories')))
+        
+        words = []
+        for vl in self.v_lists:
+            if vl.story.key() in which_stories:
+                words += Vocab.words_and_keys(vl)
+        
+        if random_or_not == 'random':
+            words = random.sample(words, min(num_words, len(words)))
+        else:
+            if num_words != 'all':
+                words = words[:num_words]
+        
+        self.render("mydesk.html", stories=self.stories, my_vocab=words)
 
 
 # =========================
@@ -596,6 +626,7 @@ app = webapp2.WSGIApplication([
                                ('/mydesk/?', MyDesk),
                                ('/onetimeuse/?', OneTimeUse),
                                ('/reordervocab/?', ReorderVocab),
+                               ('/reviewvocab/?', ReviewVocab),
                                ('/(\d+)', ReadStory),
                                ('/savecomments/?', SaveComments),
                                ('/signup/?', SignUp)

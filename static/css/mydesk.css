@@ -1,18 +1,59 @@
-#left {
-    width: 9em;
+#content_container {
+    width: 60em;
+    margin-left:auto;
+    margin-right:auto;
 }
+#left { display: none; }
+#right {width: 20em;}
+#center {width: 30em; border-right: 1px solid lightgrey;}
 
-#center {
-    width: 23em;
-    border-right: 1px solid lightgrey;
+
+#topline_mydesk {
+    width: 10em; 
+    margin-left: auto; 
+    margin-right: auto; 
+    text-align: center;
+    padding-bottom: .1em;
+    border-bottom: 1px solid lightgrey;
 }
-
-
-a#my_profile {
-    margin-top: 1.3em;
+#topline_tagline {display: inline-block;}
+#topline form#review_vocab {
+    width: 40em;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    border-bottom: 1px solid lightgrey;
 }
-
-input#retrieve_vocab {
+input#go_button {
     font-size: 1em;
     width: 4em;
+}
+
+
+table.vocab_list {
+    /*The width and margin need to add to width of container*/
+    width: 18.75em; 
+/*    margin-left: .75em;*/
+    border-collapse: collapse;
+    border: none;
+}
+
+table.vocab_list td{
+    padding: .2em 0;
+}
+
+table.vocab_list td:first-child {
+    border: none;
+    text-align: left;
+    color: #323232;
+    font-size: .85em;
+}
+
+table.vocab_list td:nth-child(2) {
+    padding-left: .5em;
+    border: none;
+    text-align: left;
+    color: silver;
+    font-size: .7em;
+    font-weight: 300;
 }

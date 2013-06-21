@@ -2,7 +2,10 @@ Next:
 
 MyDesk:
 	- figure out how to query words
+		- get the words to show in reverse order of when they were added
 	- figure out the temp list and quizes
+		- make everything look nicer
+		- make it so that the query parameters are saved somehow.
 
 main.py:
 	- cache every query.
@@ -12,7 +15,9 @@ Welcome:
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
-		
+	- .strip() whenever getting things and putting in db
+	- set max characters for all text_areas, etc.
+	
 		
 		
 		
