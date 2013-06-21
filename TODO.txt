@@ -1,8 +1,5 @@
 Next:
 
-AddStory:
-	- create a branch to test out how it would work without jHtmlArea
-
 MyDesk:
 	- figure out how to query words
 	- figure out the temp list and quizes
@@ -27,8 +24,7 @@ Ideas for the 2nd launch:
 	- add location property to questions
 	- add ability to delete questions and answer posted by student
 	- scroll to answer after submitting an answer
-	
-	- maybe I should convert the stories to plain textareas rather than jHtmlArea
+	- add audio (maybe host on soundcloud)
 	
 
 	

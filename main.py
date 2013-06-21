@@ -26,6 +26,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), a
 # = HANDLER BASE =
 # ================
 
+
 class HandlerBase(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -58,6 +59,7 @@ class HandlerBase(webapp2.RequestHandler):
         sid = self.read_secure_cookie('student_id')
         self.student = sid and Student.by_id(int(sid))
     
+
 
 
 # ===================
@@ -212,6 +214,7 @@ class StoryExtras(db.Model):
 # = QUERIES =
 # ===========
 
+
 def retrieve_stories_w_extras(type_filter='most_recent', difficulty='all'):
     S = []
     
@@ -230,9 +233,12 @@ def retrieve_stories_w_extras(type_filter='most_recent', difficulty='all'):
                 
     return S
 
+
+
 # ============
 # = HANDLERS =
 # ============
+
 
 class OneTimeUse(HandlerBase):
     def get(self):
@@ -241,9 +247,11 @@ class OneTimeUse(HandlerBase):
     
 
 
+
 # ===========
 # = STORIES =
 # ===========
+
 
 class Stories(HandlerBase):
     def get(self):
@@ -317,9 +325,11 @@ class ReadStory(HandlerBase):
     
 
 
+
 # ======================
 # = VOCAB MANIPULATION =
 # ======================
+
 
 class AddVocab(HandlerBase):
     def post(self):
@@ -392,11 +402,10 @@ class ReorderVocab(HandlerBase):
 
 
 
-
-
 # =========
 # = Q & A =
 # =========
+
 
 class QandABase(HandlerBase):
     def post(self):
@@ -484,6 +493,7 @@ class IncrementThanks(QandABase):
 # = Comments =
 # ============
 
+
 class SaveComments(HandlerBase):
     def post(self):
         story = Story.by_id(int(self.request.get('story_id')))
@@ -496,12 +506,10 @@ class SaveComments(HandlerBase):
 
 
 
-
-
-
 # ===========
 # = MY DESK =
 # ===========
+
 
 class MyDesk(HandlerBase):
     def get(self):
@@ -512,9 +520,11 @@ class MyDesk(HandlerBase):
     
 
 
+
 # =========================
 # = LOGIN, LOGOUT, SIGNUP =
 # =========================
+
 
 class Login(HandlerBase):
     def get(self):
