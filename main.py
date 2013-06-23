@@ -535,7 +535,8 @@ class ReviewVocab(MyDeskBase):
         if num_words != 'all':
             num_words = int(num_words)
         random_or_not = self.request.get('random_or_not')
-        which_stories = map(db.Key, map(decrypt, self.request.get_all('which_stories')))
+        which_stories_e = self.request.get_all('which_stories')
+        which_stories = map(db.Key, map(decrypt, which_stories_e))
         
         words = []
         for vl in self.v_lists:
@@ -548,7 +549,9 @@ class ReviewVocab(MyDeskBase):
             if num_words != 'all':
                 words = words[:num_words]
         
-        self.render("mydesk.html", stories=self.stories, my_vocab=words)
+        self.render("mydesk.html", stories=self.stories, my_vocab=words,
+                    which_stories_e=which_stories_e, num_words=str(num_words),
+                    random_or_not=random_or_not)
 
 
 # =========================

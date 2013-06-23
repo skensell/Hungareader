@@ -1,11 +1,13 @@
 #content_container {
-    width: 60em;
+    width: 100%;
     margin-left:auto;
     margin-right:auto;
 }
 #left { display: none; }
-#right {width: 20em;}
-#center {width: 30em; border-right: 1px solid lightgrey;}
+#right {display: none;}
+/*Note: I need display: block to center things by overriding display:inline-block in base*/
+#center {width: 50em; display:block; margin-left:auto; margin-right:auto;
+     padding: 0;}
 
 
 #topline_mydesk {
@@ -17,12 +19,15 @@
     border-bottom: 1px solid lightgrey;
 }
 #topline_tagline {display: inline-block;}
+#topline #form_p{margin-bottom: 0}
 #topline form#review_vocab {
     width: 40em;
+    padding: 0 5em;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     border-bottom: 1px solid lightgrey;
+
 }
 input#go_button {
     font-size: 1em;
@@ -30,30 +35,40 @@ input#go_button {
 }
 
 
+ul#vocab_controls {
+    list-style: none;
+    width:20em;
+    margin: auto;
+    margin-bottom: 1em;
+}
+ul#vocab_controls li{
+    display: inline-block; 
+    padding:0 1em;
+}
+
 table.vocab_list {
-    /*The width and margin need to add to width of container*/
-    width: 18.75em; 
-/*    margin-left: .75em;*/
+    width: 30em;
+    margin-left: auto;
+    margin-right: auto;
     border-collapse: collapse;
     border: none;
 }
 
 table.vocab_list td{
     padding: .2em 0;
+    border: none;
+    width: 14em;
+    text-align: left;
+    font-size: 1.2em;
 }
 
 table.vocab_list td:first-child {
-    border: none;
-    text-align: left;
     color: #323232;
-    font-size: .85em;
 }
 
 table.vocab_list td:nth-child(2) {
+    visibility: hidden;
     padding-left: .5em;
-    border: none;
-    text-align: left;
     color: silver;
-    font-size: .7em;
     font-weight: 300;
 }

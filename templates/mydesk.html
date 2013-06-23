@@ -17,31 +17,31 @@
 {% else %}
 
 <form id="review_vocab" action="/reviewvocab" method="get" accept-charset="utf-8">
-	<p> Show
+	<p id="form_p"> Show
 	<select name="num_words" id="num_words" size="1">
-		<option value="1">1</option>
-		<option value="5">5</option>
-		<option value="10">10</option>
-		<option value="20">20</option>
-		<option value="50">50</option>
-		<option value="100">100</option>
-		<option value="500">500</option>
-		<option value="all">all</option>
+		{% for i in ['all','1','5','10','20','50','100','500'] %}
+			<option {% if i == num_words %} selected {% endif %}
+			 value="{{i}}">{{i}}</option>
+		{% endfor %}
 	</select>
 	words
 	<select name="random_or_not" id="random_or_not" size="1">
-		<option value="random">randomly chosen</option>
 		<option value="in_order">in order added</option>
+		<option {% if random_or_not == 'random' %} selected {% endif %}
+		value="random">randomly chosen</option>
 	</select>
 	from
-	<select name="which_stories" id="which_stories" multiple style="height: 5em; vertical-align:top">
+	<select name="which_stories" id="which_stories"
+	 multiple style="height: 5em; vertical-align:top">
 		
 		{% for (s, s_key_e) in stories %}
-		<option value="{{s_key_e}}">{{s.title}}</option>
+		<option {% if s_key_e in which_stories_e %} selected {% endif %}
+		 value="{{s_key_e}}">{{s.title}}</option>
 		{% endfor %}
 		
 	</select>
-	<input type="submit" id="go_button" value="GO">
+	
+	<input autofocus type="submit" id="go_button" value="GO">
 	</p>
 </form>
 
@@ -53,6 +53,14 @@
 
 
 {%block center %}
+{% if my_vocab %}
+
+<ul id="vocab_controls">
+	<li><a href="#" id="defs">definitions</a></li><!--  
+	--><li><a href="#" id="make_templist">make a list</a></li><!--  
+	--><li><a href="#" id="quiz_me">quiz me</a></li>
+</ul>
+
 <table id="my_vocab_table" class="vocab_list" border="1">
 	<tbody>
 	{% for (v, v_key_e) in my_vocab %}
@@ -60,17 +68,17 @@
 	{% endfor %}
 	</tbody>
 </table>
-
-
+<br/>
+{% endif %}
 {% endblock %}
 
 
 
 
 
-{% block right_side %}
+<!-- {% block right_side %}
 <h3>The temporary list.</h3>
 
 
 
-{% endblock %}
+{% endblock %} -->
