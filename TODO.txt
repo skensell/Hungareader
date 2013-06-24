@@ -1,7 +1,6 @@
 Next:
 
 main.py:
-	- .strip() whenever getting things and putting in db
 	- cache every commonly-used query.
 
 Create Footer:
@@ -10,8 +9,8 @@ Create Footer:
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
-	- set max characters for all text_areas, etc.
 	- see about adding a youtube video
+
 	
 		
 		

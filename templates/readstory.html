@@ -18,7 +18,14 @@
 	
 	{{ info_message("This story has some unanswered questions.
 		Visit the Q&A to help a fellow Hungarian student out!")}}
+	<br/>
 {% endif %}
+
+{% if story.video_id %}
+	<iframe width="487" height="300" src="http://www.youtube.com/embed/{{story.video_id}}"
+	 frameborder="0" allowfullscreen></iframe>
+{% endif %}
+
 
 <h1>{{story.title}}</h1>
 <hr/>
@@ -69,8 +76,8 @@
 			<hr/>
 			<div id="instructions_container">
 				<form action="/addvocab" method="post" accept-charset="utf-8" id="add_vocab">
-						<input name="new_word" placeholder="new Hungarian" id="new_word">
-						<input name="new_def" placeholder="its meaning" id="new_def">
+						<input name="new_word" maxlength="100" placeholder="new Hungarian" id="new_word">
+						<input name="new_def" maxlength="100" placeholder="its meaning" id="new_def">
 						<button type="submit" id="submit_word"><i class="icon-plus"></i></button>
 				</form>
 			
@@ -140,7 +147,7 @@
 				<div class="Q_label_container">
 					<label class="big_Q">Q </label>
 				</div><!-- 
-			 --><textarea type="text" name="question" rows="3"
+			 --><textarea type="text" name="question" rows="3" maxlength="3000"
 				 placeholder="How do you translate..." id="question"></textarea>
 				
 				<button type="submit" class="red" id="ask_it_button"><i class="icon-comment"></i>
@@ -164,7 +171,7 @@
 			<h3>Comments Wall</h3>
 			<hr/>
 			<form action="/savecomments" method="post" accept-charset="utf-8">
-				<textarea id="comments_text" name="comments_text" maxlength="1000">
+				<textarea id="comments_text" name="comments_text" maxlength="3000">
 					{{story_extras.comments}}
 				</textarea>
 				<div id="comments_instructions">

@@ -1,6 +1,6 @@
 /*The content_container has width 60em*/
 #content_container {
-    width: 70em;
+    min-width: 45em;
 }
 
 #left {
@@ -12,7 +12,7 @@
 }
 
 #right {
-    width: 35em;
+    width: 9em;
 }
 
 /* ============== */
@@ -42,7 +42,8 @@ p {
     position:fixed;
     padding: 0 1em 0 1em;
     top: 7em;
-    left: 39em;
+/*    left: 39em;*/
+    right: 7.5em;
     width: 19.5em;
     height: 25em;
     border-top: 1px solid grey;
@@ -52,6 +53,7 @@ p {
     -webkit-box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.8);
     box-shadow:         3px 3px 10px 1px rgba(0,0,0,0.8);
     overflow: auto;
+    background-color: white;
     /*give a max height and overflow scrollbar*/
 }
 
@@ -75,7 +77,8 @@ p {
 #right_tool_bar {
     position: fixed;
     top: 7em;
-    left: 61.5em;
+/*    left: 61.5em;*/
+    right: .5em;
     width: 6em;
     padding-left: .3em;
     border-left: 1px solid lightgrey;
@@ -110,7 +113,8 @@ div#my_vocab_tools {
     position: fixed;
     z-index: 2;
     top:7em;
-    left: 52.3em;
+/*    left: 52.3em;*/
+    right: 10em;
 }
 
 div#my_vocab_tools div#pencil_icon_container{

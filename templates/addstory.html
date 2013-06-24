@@ -22,15 +22,20 @@
 	<div>
 		<label for="title">title</label>
 	</div>
-	<input name="title" autofocus maxlength="495" value="{{title}}">
+	<input name="title" autofocus maxlength="200" value="{{title}}">
 	
 	<div>
-	<label for="summary">brief summary (optional)</label>
+	<label for="summary">brief summary</label>
 	</div>
-	<textarea name="summary" maxlength="495" rows="2">{{summary}}</textarea>
+	<textarea name="summary" maxlength="490" rows="2">{{summary}}</textarea>
 
 	<label for="story">story</label>
-	<textarea id="story" name="story" rows="20">{{story}}</textarea>
+	<textarea id="story" name="story" maxlength="100000" rows="20">{{story}}</textarea>
+	
+	<div>
+		<label for="video_url">youtube video url (optional)</label>
+	</div>
+	<input name="video_url" maxlength="500" value="{{video_url}}">
 
 	<select name="difficulty" size="1">
 		<option value="" disabled selected>Choose difficulty</option>

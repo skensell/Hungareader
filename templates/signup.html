@@ -22,8 +22,14 @@
 			<label for="new_pwd">password:</label>
 		</div>
 		<input name="new_pwd" type="password" value="" id="new_pwd">
+		{% if error_new_pwd %}
 		<div class="error">{{error_new_pwd}}</div>
-		
+		{% else %}
+		<div class="pwhash">Yes, your password is securely 
+			<a tabindex="-1" href="http://en.wikipedia.org/wiki/Cryptographic_hash_function"
+			 target="_blank">hashed</a>.
+		</div>
+		{% endif %}
 		<br/>
 	
 		<div>

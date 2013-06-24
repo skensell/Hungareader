@@ -9,6 +9,8 @@
 #center {width: 50em; display:block; margin-left:auto; margin-right:auto;
      padding: 0;}
 
+#info_msg_container{ width: 30em; margin-left:auto; margin-right:auto;}
+
 
 #topline_mydesk {
     width: 10em; 

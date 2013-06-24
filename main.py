@@ -8,6 +8,7 @@ import json
 
 #security and validation
 from utilities.security import *
+from utilities.youtube_api import *
 
 #for debugging
 import logging
@@ -93,8 +94,9 @@ class Student(db.Model):
 
 class Story(db.Model):
     title = db.StringProperty(required = True)
-    summary = db.StringProperty() #must be < 500 characters
+    summary = db.StringProperty(required = True) #must be < 500 characters
     text = db.TextProperty(required = True)
+    video_id = db.StringProperty()
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
@@ -274,17 +276,19 @@ class AddStory(HandlerBase):
         title = self.request.get('title').strip()
         summary = self.request.get('summary').strip()
         text = self.request.get('story').rstrip()
+        video_url = self.request.get('video_url').strip()
         difficulty = self.request.get('difficulty')
         
-        error_msg = "Title, story, and difficulty are all required fields."
+        error_msg = "Please fill out all required fields."
         
         if not (title and summary and text):
             self.render("addstory.html", error=error_msg, title=title, summary=summary,
-                        story=text, difficulty=difficulty)
+                        story=text, difficulty=difficulty, video_url=video_url )
         else:
             uploader = self.student
+            video_id = get_video_id(video_url)
             s = Story(title=title, summary=summary, text=text,
-                difficulty=difficulty, uploader=uploader)
+                difficulty=difficulty, uploader=uploader, video_id=video_id)
             story_key = s.put()
             
             story_extras = StoryExtras(parent=story_key)
@@ -332,8 +336,8 @@ class ReadStory(HandlerBase):
 
 class AddVocab(HandlerBase):
     def post(self):
-        new_word = self.request.get("new_word")
-        new_def = self.request.get("new_def")
+        new_word = self.request.get("new_word").strip()
+        new_def = self.request.get("new_def").strip()
         mode = self.request.get("mode")
         
         # retrieve the word from db or create it
@@ -432,7 +436,7 @@ class QandABase(HandlerBase):
 
 class AskQuestion(QandABase):
     def action(self):
-        question = self.request.get('question')
+        question = self.request.get('question').strip()
         
         q = Question(parent=self.story, question=question, uploader=self.student)
         q.put()
@@ -458,7 +462,7 @@ class AnswerQuestion(QandABase):
     def action(self):
         q_key_e = self.request.get('q_key_e')
         q_key = db.Key(decrypt(q_key_e))
-        answer = self.request.get('answer')
+        answer = self.request.get('answer').strip()
         
         a = Answer(parent=q_key, answer=answer, uploader=self.student)
         a.put()
@@ -497,7 +501,7 @@ class SaveComments(HandlerBase):
     def post(self):
         story = Story.by_id(int(self.request.get('story_id')))
         s_extras = StoryExtras.by_story(story.key())
-        comments = self.request.get('comments_text')
+        comments = self.request.get('comments_text').strip()
         
         s_extras.comments = comments
         s_extras.put()
@@ -523,9 +527,7 @@ class MyDesk(MyDeskBase):
         else:
             self.render("mydesk.html", stories=self.stories)
     
-
-class ReviewVocab(MyDeskBase):
-    def get(self):
+    def post(self):
         num_words = self.request.get('num_words')
         if num_words != 'all':
             num_words = int(num_words)
@@ -546,7 +548,9 @@ class ReviewVocab(MyDeskBase):
         
         self.render("mydesk.html", stories=self.stories, my_vocab=words,
                     which_stories_e=which_stories_e, num_words=str(num_words),
-                    random_or_not=random_or_not)
+                    random_or_not=random_or_not)        
+    
+
 
 
 # =========================
@@ -624,7 +628,6 @@ app = webapp2.WSGIApplication([
                                ('/mydesk/?', MyDesk),
                                ('/onetimeuse/?', OneTimeUse),
                                ('/reordervocab/?', ReorderVocab),
-                               ('/reviewvocab/?', ReviewVocab),
                                ('/(\d+)', ReadStory),
                                ('/savecomments/?', SaveComments),
                                ('/signup/?', SignUp)
