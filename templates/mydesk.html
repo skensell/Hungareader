@@ -19,7 +19,7 @@
 <form id="review_vocab" action="/reviewvocab" method="get" accept-charset="utf-8">
 	<p id="form_p"> Show
 	<select name="num_words" id="num_words" size="1">
-		{% for i in ['all','1','5','10','20','50','100','500'] %}
+		{% for i in ['all','5','10','20','50','100','500'] %}
 			<option {% if i == num_words %} selected {% endif %}
 			 value="{{i}}">{{i}}</option>
 		{% endfor %}
@@ -56,9 +56,7 @@
 {% if my_vocab %}
 
 <ul id="vocab_controls">
-	<li><a href="#" id="defs">definitions</a></li><!--  
-	--><li><a href="#" id="make_templist">make a list</a></li><!--  
-	--><li><a href="#" id="quiz_me">quiz me</a></li>
+	<li><a href="#" id="defs">definitions</a></li>
 </ul>
 
 <table id="my_vocab_table" class="vocab_list" border="1">
@@ -69,6 +67,9 @@
 	</tbody>
 </table>
 <br/>
+
+
+
 {% endif %}
 {% endblock %}
 

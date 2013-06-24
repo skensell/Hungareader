@@ -37,7 +37,7 @@ input#go_button {
 
 ul#vocab_controls {
     list-style: none;
-    width:20em;
+    width:10em;
     margin: auto;
     margin-bottom: 1em;
 }
@@ -72,3 +72,4 @@ table.vocab_list td:nth-child(2) {
     color: silver;
     font-weight: 300;
 }
+
