@@ -73,11 +73,6 @@ class Student(db.Model):
     email = db.StringProperty()
     level = db.StringProperty(required = True)
     date_joined = db.DateProperty(auto_now_add=True)
-    # vocab_added = db.IntegerProperty()
-    # vocab_increase = db.IntegerProperty()
-    # vocab_reviews = db.IntegerProperty()
-    # stories_read = db.IntegerProperty()
-    # stories_uploaded = db.IntegerProperty()#can get from references from Story
     
     @classmethod
     def by_id(cls, sid):

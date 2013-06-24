@@ -34,14 +34,24 @@ input#go_button {
     width: 4em;
 }
 
+div#vocab_controls_container{
+    position: relative;
+    z-index: 2;
+    height: 1.5em;
+}
+div#vocab_controls_fake{
+    /*Needed for fancy scrolling*/
+    height: 1.5em;
+    display: none;
+}
 
 ul#vocab_controls {
     list-style: none;
     width:10em;
     margin: auto;
-    margin-bottom: 1em;
 }
 ul#vocab_controls li{
+    background-color: rgba(255,255,255,0.5);
     display: inline-block; 
     padding:0 1em;
 }

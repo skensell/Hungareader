@@ -54,10 +54,13 @@
 
 {%block center %}
 {% if my_vocab %}
+<div id="vocab_controls_container">
+	<ul id="vocab_controls">
+		<li><a href="#" id="defs">definitions</a></li>
+	</ul>
+</div>
 
-<ul id="vocab_controls">
-	<li><a href="#" id="defs">definitions</a></li>
-</ul>
+<div id="vocab_controls_fake"></div>
 
 <table id="my_vocab_table" class="vocab_list" border="1">
 	<tbody>
