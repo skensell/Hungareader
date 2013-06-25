@@ -1,7 +1,7 @@
 Next:
 
 Testing:
-	- Test my memcached decorator before I apply it.
+	- Test my memcached decorator against the actual queries I'm going to do before inserting everywhere.
 
 CACHING:
 	- stories
@@ -22,12 +22,6 @@ General:
 	- Make favicon (a white lobster H with red backdrop)
 	- How to edit stories?
 
-
-New Code required:
-	dev_appserver.py --datastore_path=./dev_appserver.datastore --port 8888 .
-		
-Notes:
-	I have dev_appserver.datastore now as a persistent datastore..
 	
 		
 		
@@ -44,14 +38,6 @@ Ideas for the 2nd launch:
 	
 
 	
-	
-
-
-Failures to return to:
-	I need to get the jHtmlArea in addstory.html to light up green when focused.
-	
-	to get the exact length of jHtmlArea to align with the other textareas I can
-	just fiddle with #story's width I think.
 
 	
 Cron jobs to run:
