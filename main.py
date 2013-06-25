@@ -216,7 +216,14 @@ class StoryExtras(db.Model):
 # ===========
 
 
-def retrieve_stories_w_extras(type_filter='most_recent', difficulty='all'):
+def recent_stories_w_extras(type_filter='most_recent', difficulty='all', update=False):
+    """
+    The main query called by Stories. Looks in memcache first unless update=True.
+    
+    returns: [(story, story_extras) for story satisfying filters]
+    """
+    key = 'type_filter:%s difficulty:%s'% (type_filter, difficulty)
+    
     S = []
     
     stories_q = Story.most_recent()
@@ -259,7 +266,7 @@ class Stories(HandlerBase):
         type_filter = self.request.get('type_filter') or 'most_recent'
         difficulty = self.request.get('difficulty') or 'all'
         
-        stories_w_extras = retrieve_stories_w_extras(type_filter, difficulty);
+        stories_w_extras = recent_stories_w_extras(type_filter, difficulty);
         
         self.render('stories.html', stories_w_extras=stories_w_extras, type_filter=type_filter,
                     difficulty=difficulty)    

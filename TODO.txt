@@ -1,7 +1,15 @@
 Next:
 
+CACHING:
+	- stories
+	- mydesk
+	- readstory
+	- Make sure I'm updating at all the appropriate times (e.g. when adding a story)
+
+
 main.py:
 	- cache every commonly-used query.
+	- figure out how to use logging so that I can debug after shipping
 
 Create Footer:
 	Welcome/About/Feedback/Bugs:
@@ -9,7 +17,7 @@ Create Footer:
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
-	- see about adding a youtube video
+	- How to edit stories?
 
 	
 		
@@ -18,12 +26,14 @@ General:
 		
 		
 Ideas for the 2nd launch:
-	- add a hide meaning tab to my_vocab_tools
-	- add a view_printable tab to my_vocab_tools
+	big ideas:
+	- AUDIO with soundcloud
+	- Leaderboard and student stats
+	- Add dictionary-lookup capability somehow
+	
+	little things:
 	- add location property to questions
-	- add ability to delete questions and answer posted by student
 	- scroll to answer after submitting an answer
-	- add audio (maybe host on soundcloud)
 	
 
 	
