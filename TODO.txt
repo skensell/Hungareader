@@ -1,5 +1,8 @@
 Next:
 
+Testing:
+	- Test my memcached decorator before I apply it.
+
 CACHING:
 	- stories
 	- mydesk
@@ -19,9 +22,13 @@ General:
 	- Make favicon (a white lobster H with red backdrop)
 	- How to edit stories?
 
+
+New Code required:
+	dev_appserver.py --datastore_path=./dev_appserver.datastore --port 8888 .
+		
+Notes:
+	I have dev_appserver.datastore now as a persistent datastore..
 	
-		
-		
 		
 		
 		

@@ -227,18 +227,19 @@ def recent_stories_w_extras(type_filter='most_recent', difficulty='all', update=
     S = []
     
     stories_q = Story.most_recent()
+    
     if difficulty != 'all':
         stories_q.filter('difficulty =', difficulty)
     
     for s in stories_q.run(limit=50):
         s_extras = StoryExtras.by_story(s.key())
-        
+    
         if type_filter == 'most_recent':
             S.append((s,s_extras))
         elif type_filter == 'unanswered':
             if s_extras.has_unanswered_Q:
                 S.append((s,s_extras))
-                
+            
     return S
 
 
