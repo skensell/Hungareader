@@ -2,7 +2,7 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
-from utilities.security import encrypt, decrypt, make_pw_hash
+from utilities.security import encrypt, decrypt
 
 
 # =========
@@ -11,6 +11,7 @@ from utilities.security import encrypt, decrypt, make_pw_hash
 
 
 class Student(db.Model):
+    """It also has the classmethod 'register' defined in authentication.py """
     name = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
     email = db.StringProperty()
@@ -24,14 +25,6 @@ class Student(db.Model):
     @classmethod
     def by_name(cls, name):
         return Student.all().filter('name =', name).get()
-    
-    @classmethod
-    def register(cls, name, pw, level, email = None):
-        pw_hash = make_pw_hash(name, pw)
-        return Student(name = name,
-                    pw_hash = pw_hash,
-                    level = level,
-                    email = email)
     
 
 class Story(db.Model):

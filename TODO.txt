@@ -13,6 +13,7 @@ Restructure stories query:
 	
 
 Testing:
+	- It might be worth trying the new type of S.f = classmethod(f) 
 	- Test my memcached decorator against the actual queries I'm going to do before inserting everywhere.
 
 CACHING:
