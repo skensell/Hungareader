@@ -1,5 +1,17 @@
 Next:
 
+Restructure stories query:
+	- Story.most_recent(difficulty="all")
+		- returns a list of 50 most_recent stories according to difficulty
+		- when a new story is added the difficulty="all" and the difficulty of the story are updated
+	- Story.unanswered(difficulty="all")
+		- returns a list of 50 most_recent stories which have unanswered questions according to difficulty
+		- when a new question is asked (if the story doesn't already have a new Q) or when a lone answer
+		is deleted we update the "all" and difficulty of story queries.
+	- At the front page:
+		- I will have to get rid of the red Q
+	
+
 Testing:
 	- Test my memcached decorator against the actual queries I'm going to do before inserting everywhere.
 
@@ -21,6 +33,7 @@ Create Footer:
 General:
 	- Make favicon (a white lobster H with red backdrop)
 	- How to edit stories?
+	- How to prevent spam?
 
 	
 		

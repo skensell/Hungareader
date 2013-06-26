@@ -144,11 +144,11 @@ class memcached(object):
     """
     This is a decorator for storing query results in memcache.
     
-    @memcached(key='some_query')
-    def q():
+    @memcached(memcache_key='some_query')
+    def q(**kw):
         return [s for s in Story.all().run()]
     
-    r = q(key='my_favorite_key', arg1, arg2, ...)
+    r = q(memcache_key='my_favorite_key', **kw)
     
     Each time a new key is given to q it hits the datastore, stores it in memcache, and returns it.
     Each time an old key is given it hits the memcache and returns it, unless update=True, in which
@@ -159,12 +159,13 @@ class memcached(object):
     but this is not recommended.
     
     """
-    def __init__(self, key="some_key", *args, **kw):
-        self.key = key or 'DEFAULT_KEY'
+    def __init__(self, memcache_key="DEFAULT_KEY", *args, **kw):
+        self.key = memcache_key
     
     def __call__(self, f):
         """This is called just once when we use @memcached()"""
-        def memoized_f(key=self.key, update=False, *args, **kw):
+        def memoized_f(memcache_key=self.key, update=False, *args, **kw):
+            key = memcache_key
             client = memcache.Client()
             val = client.gets(key)
             if val != None and not update:
@@ -213,7 +214,7 @@ class TestCase(unittest.TestCase):
         Story(title="Harry Potter", difficulty="Intermediate").put()
         Story(title="A korhazban", difficulty="Beginner").put()
         
-        @memcached(key="most_recent_stories")
+        @memcached(memcache_key="most_recent_stories")
         def most_recent_stories():
             return [s for s in Story.most_recent().run(limit=10)]
         
@@ -239,7 +240,7 @@ class TestCase(unittest.TestCase):
         Story(title="A new title", difficulty="Advanced").put()
         Story(title="Yet another story", difficulty="Beginner").put()
         
-        stories2 = most_recent_stories(key="whatever I want") # miss 2, sets with new key
+        stories2 = most_recent_stories(memcache_key="whatever I want") # miss 2, sets with new key
         retrieved_stories2 = memcache.get('whatever I want') # hit 5
         self.assertEqual(4, len(stories2))
         self.assertEqual(4, len(retrieved_stories2))
@@ -249,11 +250,11 @@ class TestCase(unittest.TestCase):
         self.assertEqual(2, len(stories3))
         self.assertEqual(2, stats['misses'])
         
-        s4 = most_recent_stories(key="whatever I want") # hit 7
+        s4 = most_recent_stories(memcache_key="whatever I want") # hit 7
         self.assertEqual(4, len(s4))
         self.assertEqual(s4[0].title, "Yet another story")
         
-        s5 = most_recent_stories(key="most_recent_stories", update=True) # hit 8
+        s5 = most_recent_stories(memcache_key="most_recent_stories", update=True) # hit 8
         s6 = memcache.get('most_recent_stories') # hit 9
         self.assertEqual(4, len(s5))
         self.assertEqual(4, len(s6))
@@ -267,13 +268,13 @@ class TestCase(unittest.TestCase):
         Story(title="Harry Potter", difficulty="Intermediate").put()
         Story(title="A korhazban", difficulty="Beginner").put()
         
-        @memcached(key="most_recent_stories")
+        @memcached(memcache_key="most_recent_stories")
         def most_recent_stories():
             return Story.most_recent().run()
         
         self.assertRaises(Exception, most_recent_stories) # can't store query.run() in memcache
         
-        @memcached(key="the most recent")
+        @memcached(memcache_key="the most recent")
         def a_recent_story():
             return Story.most_recent().fetch(1) # works because this just fetches a list of at most 1
         
@@ -283,7 +284,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual('A korhazban', s[0].title)
         self.assertEqual(1, len(cached_s))
         
-        @memcached(key="just a story")
+        @memcached(memcache_key="just a story")
         def just_a_story():
             return Story.most_recent().get()
         
@@ -295,8 +296,67 @@ class TestCase(unittest.TestCase):
         self.assertEqual(s.key().id(), cached_s.key().id())
     
     def testMemcacheDecorator3(self):
-        """Tests whether the optional arguments will work in retrieve_stories."""
-        pass
+        """Tests whether the @classmethod will work with the decorator. IT DOES NOT!"""
+        class AStory(db.Model):
+            title = db.StringProperty()
+            difficulty = db.StringProperty()
+            
+            @classmethod
+            @memcached(memcache_key="SOME_TITLE")
+            def by_title(cls, title=''):
+                return AStory.all().filter("title =", title).get()
+            
+        
+        
+        AStory(title="winners", difficulty="Beginner").put()
+        AStory(title="losers", difficulty="Advanced").put()
+        
+        # Can it take filter arguments?
+        #s1 = AStory.by_title(memcache_key="winners", title="winners") # miss 1 
+        #cached_s1 = memcache.get("winners") # hit 1
+        #self.assertEqual(s1.difficulty, cached_s1.difficulty)
+        #self.assertEqual(s1.title, cached_s1.title)
+        
+    
+    def testMemcacheDecorator4(self):
+        """Tests whether the decorator works on a function with arguments."""
+        Story(title="Harry Potter", difficulty="Intermediate").put()
+        Story(title="A korhazban", difficulty="Beginner").put()
+        
+        @memcached(memcache_key="most_recent all")
+        def Story_most_recent(difficulty='all'):
+            q = Story.most_recent()
+            if difficulty != "all":
+                q = q.filter('difficulty =', difficulty)
+            return q.get()
+        
+        s1 = Story_most_recent() # miss 1, sets with default key
+        cached_s1 = memcache.get('most_recent all') # hit 1
+        self.assertEqual(s1.title, cached_s1.title, 'A korhazban')
+        self.assertEqual(s1.difficulty, cached_s1.difficulty, 'Beginner')
+        
+        s2 = Story_most_recent(memcache_key="most_recent Intermediate", difficulty="Intermediate") # miss 2
+        cached_s2 = memcache.get('most_recent Intermediate') # hit 2
+        self.assertEqual(s2.title, cached_s2.title, 'Harry Potter')
+        self.assertEqual(s2.difficulty, cached_s2.difficulty, 'Intermediate')
+        
+        Story(title="Blue", difficulty="Intermediate").put()
+        
+        # Without updating it should still return Harry Potter
+        s3 = Story_most_recent(difficulty="Intermediate", memcache_key="most_recent Intermediate") # hit 3
+        self.assertEqual(s3.title, "Harry Potter")
+        
+        s4 = Story_most_recent(difficulty="Intermediate", memcache_key="most_recent Intermediate", update=True) # hit 4
+        cached_s4 = Story_most_recent(difficulty="Intermediate", memcache_key="most_recent Intermediate") # hit 5
+        self.assertEqual(s4.title, "Blue")
+        self.assertEqual(cached_s4.title, "Blue")
+        
+        stats = memcache.get_stats()
+        self.assertEqual(stats['hits'], 5)
+        self.assertEqual(stats['misses'], 2)
+        
+        
+        
     
 
 
