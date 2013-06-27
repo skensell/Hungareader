@@ -1,9 +1,13 @@
 from functools import update_wrapper
 from google.appengine.api import memcache
 
+
 class memcached(object):
     """
-    This is a decorator for storing query results in memcache.
+    This is a decorator for storing query results in memcache. 
+    It introduces two new keyword arguments 'memcache_key' and 'update' to the function
+    which it wraps. The function should specify memcache_key when called if you'd like to
+    use a different key than the one defined at instantiation.
     
     @memcached(memcache_key='some_query')
     def q(**kw):
@@ -16,7 +20,8 @@ class memcached(object):
     case it hits the datastore, stores it in memcache, and returns it.
     If q is called with no "key" argument, the default key of "some_query" will be used.
     
-    See test_memcache_decorator.py for detailed unittests.
+    @memcached() can also be called without any arguments, providing a default key of DEFAULT_KEY
+    but this is not recommended.
     
     """
     def __init__(self, memcache_key="DEFAULT_KEY", *args, **kw):
@@ -33,7 +38,7 @@ class memcached(object):
                 return val
             else:
                 #logging.info("Computing the result.")   
-                result = f(*args,**kw) # hits the datastore
+                result = f(*args, **kw) # hits the datastore
                 if val is None: # add it for the first itme
                     client.add(key, result)
                     return result
@@ -49,5 +54,8 @@ class memcached(object):
                         client.gets(key)
         
         return update_wrapper(memoized_f, f)
+    
+
+
 
 

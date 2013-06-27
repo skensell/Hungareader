@@ -1,20 +1,12 @@
 import webapp2
 
 from handlers.stories import Stories, AddStory, ReadStory
-
 from handlers.vocab import AddVocab, DeleteVocab, ImportVocab, ReorderVocab
-
 from handlers.QandA import AskQuestion, DeleteQuestion, AnswerQuestion, DeleteAnswer, IncrementThanks
-
 from handlers.comments import SaveComments
-
 from handlers.mydesk import MyDesk
-
 from handlers.authentication import Login, LogOut, SignUp
-
 from handlers.tools import OneTimeUse
-
-
 
 
 ##### URL-HANDLER MAPPING

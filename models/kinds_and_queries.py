@@ -3,7 +3,7 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 
 from utilities.security import encrypt, decrypt
-
+from utilities.memcache import memcached
 
 # =========
 # = Kinds =
@@ -37,8 +37,12 @@ class Story(db.Model):
     uploader = db.ReferenceProperty(Student)
     
     @classmethod
-    def most_recent(cls):
-        return Story.all().order('-created')
+    def most_recent(cls, difficulty="all"):
+        q = Story.all().order('-created')
+        if difficulty != 'all':
+            q.filter('difficulty =', difficulty)
+        return q
+    
     
     @classmethod
     def by_id(cls, sid):
@@ -152,6 +156,57 @@ class StoryExtras(db.Model):
 # = Queries =
 # ===========
 
+
+def Story_most_recent(difficulty="all", update=False):
+    """
+    returns a list of the 50 most recent Storys of a given difficulty (from memcache if possible).
+    If update=True then it returns from the datastore and writes to memcache.
+    
+    memcache_keys stored: 
+    'most_recent all'
+    'most_recent Beginner'
+    'most_recent Intermediate'
+    'most_recent Advanced'
+    """
+    key = "most_recent %s"%difficulty
+    return _Story_most_recent(memcache_key=key, update=update, difficulty=difficulty)
+
+
+@memcached(memcache_key="most_recent all")
+def _Story_most_recent(difficulty="all"):
+    q = Story.most_recent(difficulty)
+    return [s for s in q.run(limit=50)]
+
+
+def Story_unanswered(difficulty="all", update=False):
+    """
+    returns a list of the 50 most recent Storys of a given difficulty 
+    which have unanswered questions (from memcache if possible).
+    If update=True then it returns from the datastore and writes to memcache.
+
+    memcache_keys stored: 
+    'unanswered all'
+    'unanswered Beginner'
+    'unanswered Intermediate'
+    'unanswered Advanced'
+    """
+    key = "unanswered %s"%difficulty
+    return _Story_unanswered(memcache_key=key, update=update, difficulty=difficulty)
+
+
+@memcached(memcache_key="unanswered all")
+def _Story_unanswered(difficulty="all"):
+    q = _query_Story_unanswered(difficulty)
+    return [s for s in q.run(limit=50)]
+
+
+def _query_Story_unanswered(difficulty="all"):
+    q = StoryExtras.all().filter('has_unanswered_Q =', True).run(limit=50)
+    # I think I can do keys_only=True and then retrieve the stories with a parent filter.
+
+
+
+# old queries
 
 def recent_stories_w_extras(type_filter='most_recent', difficulty='all', update=False):
     """

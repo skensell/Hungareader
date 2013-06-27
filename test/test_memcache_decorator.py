@@ -4,191 +4,81 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.ext import testbed
 
-from functools import update_wrapper
+from utilities.memcache import memcached # the decorator being tested
 
+# from functools import update_wrapper
+# 
+# class memcached(object):
+#     """
+#     This is a decorator for storing query results in memcache. 
+#     It introduces two new keyword arguments 'memcache_key' and 'update' to the function
+#     which it wraps. The function should specify memcache_key when called if you'd like to
+#     use a different key than the one defined at instantiation.
+#     
+#     @memcached(memcache_key='some_query')
+#     def q(**kw):
+#         return [s for s in Story.all().run()]
+#     
+#     r = q(memcache_key='my_favorite_key', **kw)
+#     
+#     Each time a new key is given to q it hits the datastore, stores it in memcache, and returns it.
+#     Each time an old key is given it hits the memcache and returns it, unless update=True, in which
+#     case it hits the datastore, stores it in memcache, and returns it.
+#     If q is called with no "key" argument, the default key of "some_query" will be used.
+#     
+#     @memcached() can also be called without any arguments, providing a default key of DEFAULT_KEY
+#     but this is not recommended.
+#     
+#     """
+#     def __init__(self, memcache_key="DEFAULT_KEY", *args, **kw):
+#         self.key = memcache_key
+#     
+#     def __call__(self, f):
+#         """This is called just once when we use @memcached()"""
+#         def memoized_f(memcache_key=self.key, update=False, *args, **kw):
+#             key = memcache_key
+#             client = memcache.Client()
+#             val = client.gets(key)
+#             if val != None and not update:
+#                 #logging.info('Already in memcache, returning.')
+#                 return val
+#             else:
+#                 #logging.info("Computing the result.")   
+#                 result = f(*args, **kw) # hits the datastore
+#                 if val is None: # add it for the first itme
+#                     client.add(key, result)
+#                     return result
+#                 else:
+#                     # update=True
+#                     #
+#                     # avoid race conditions which may happen if multiple people
+#                     # try to update at the same time
+#                     for i in xrange(5):
+#                         if client.cas(key, result):
+#                             #logging.info("Setting memcache value and i equals %d"%i)
+#                             return result
+#                         client.gets(key)
+#         
+#         return update_wrapper(memoized_f, f)
+#     
+# 
 
+# ===========
+# = Testing =
+# ===========
 
-
-class Student(db.Model):
-    name = db.StringProperty(required = True)
-    pw_hash = db.StringProperty(required = True)
-    email = db.StringProperty()
-    level = db.StringProperty(required = True)
-    date_joined = db.DateProperty(auto_now_add=True)
-    
-    @classmethod
-    def by_id(cls, sid):
-        return Student.get_by_id(sid)
-    
-    @classmethod
-    def by_name(cls, name):
-        return Student.all().filter('name =', name).get()
-    
 
 class Story(db.Model):
     title = db.StringProperty(required = True)
-    difficulty = db.StringProperty(required = True)
+    difficulty = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add = True)
     
     @classmethod
-    def most_recent(cls):
-        return Story.all().order('-created')
-    
-    @classmethod
-    def by_id(cls, sid):
-        return Story.get_by_id(sid)
-    
-    @classmethod
-    def key_from_id(cls, sid):
-        return Story.get_by_id(sid).key()
-    
-
-class Vocab(db.Model):
-    hungarian = db.StringProperty(required = True)
-    meaning = db.StringProperty(required = True)
-    
-    @classmethod
-    def by_id(cls, vid):
-        return Vocab.get_by_id(vid)
-    
-    @classmethod
-    def retrieve(cls, hungarian, meaning):
-        return Vocab.all().filter("hungarian =", hungarian).filter("meaning =", meaning).get()
-    
-    @classmethod
-    def words_and_keys(cls, vocab_list):
-        """Takes a vocab_list object and returns a list of tuples (v, v_key_e) where
-        v is the vocab instance and v_key_e is the encrypted key for that instance."""
-        if not vocab_list:
-            return []
-        v_list = Vocab.get(vocab_list.vocab_list) # a list of instances
-        return [(v, encrypt(str(v_key))) for (v,v_key) in zip(v_list, vocab_list.vocab_list)]
-    
-
-class VocabList(db.Model):
-    student = db.ReferenceProperty(Student)
-    story = db.ReferenceProperty(Story)
-    vocab_list = db.ListProperty(db.Key) #a list of vocab_words
-    created = db.DateTimeProperty(auto_now_add = True)
-    
-    #I could check the site below for reducing .get() methods
-    #http://stackoverflow.com/questions/4719700/list-of-references-in-google-app-engine-for-python/4730415#4730415
-    @classmethod
-    def retrieve(cls, student_key, story_key):
-        #note that the student= is no good.  The SPACE IS NECESSARY.
-        return VocabList.all().filter("student =", student_key).filter("story =", story_key).get()
-    
-    @classmethod
-    def by_story(cls, story_key):
-        # order this by created
-        return VocabList.all().filter("story =", story_key).run(limit=10)
-    
-    @classmethod
-    def by_student(cls, student_key):
-        return VocabList.all().filter("student =", student_key).order('-created').run(limit=100)
-    
-
-class Answer(db.Model):
-    # always has a question as its parent
-    answer = db.TextProperty(required=True)
-    uploader = db.ReferenceProperty(Student)
-    thanks = db.IntegerProperty(default=0)
-    created = db.DateTimeProperty(auto_now_add=True)
-    
-    @classmethod
-    def by_question(cls, q_key):
-        return Answer.all().ancestor(q_key).order('created').run(limit=10)
-    
-    @classmethod
-    def one(cls, q_key):
-        return Answer.all().ancestor(q_key).get()
-        
-    @classmethod
-    def get_all_keys(cls, q_key):
-        return [a for a in Answer.all().ancestor(q_key).run(keys_only=True)]
-    
-
-class Question(db.Model):
-    # always has a story as its parent
-    question = db.TextProperty(required=True)
-    uploader = db.ReferenceProperty(Student)
-    created = db.DateTimeProperty(auto_now_add=True)
-    
-    @classmethod
-    def by_story(cls, story_key):
-        return Question.all().ancestor(story_key).order('-created').run(limit=100)
-    
-    @classmethod
-    def unanswered(cls, story_key):
-        """returns the unanswered Questions of a given story"""
-        Q = []
-        for q in Question.by_story(story_key):
-            if not Answer.one(q.key()):
-                Q.append(q)
-        return Q
-    
-
-class StoryExtras(db.Model):
-    # always has a parent Story
-    comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
-    has_unanswered_Q = db.BooleanProperty()
-    
-    @classmethod
-    def by_story(cls, story_key):
-        return StoryExtras.all().ancestor(story_key).get()
-    
-
-
-
-class memcached(object):
-    """
-    This is a decorator for storing query results in memcache.
-    
-    @memcached(memcache_key='some_query')
-    def q(**kw):
-        return [s for s in Story.all().run()]
-    
-    r = q(memcache_key='my_favorite_key', **kw)
-    
-    Each time a new key is given to q it hits the datastore, stores it in memcache, and returns it.
-    Each time an old key is given it hits the memcache and returns it, unless update=True, in which
-    case it hits the datastore, stores it in memcache, and returns it.
-    If q is called with no "key" argument, the default key of "some_query" will be used.
-    
-    @memcached() can also be called without any arguments, providing a default key of DEFAULT_KEY
-    but this is not recommended.
-    
-    """
-    def __init__(self, memcache_key="DEFAULT_KEY", *args, **kw):
-        self.key = memcache_key
-    
-    def __call__(self, f):
-        """This is called just once when we use @memcached()"""
-        def memoized_f(memcache_key=self.key, update=False, *args, **kw):
-            key = memcache_key
-            client = memcache.Client()
-            val = client.gets(key)
-            if val != None and not update:
-                #logging.info('Already in memcache, returning.')
-                return val
-            else:
-                #logging.info("Computing the result.")   
-                result = f(*args,**kw) # hits the datastore
-                if val is None: # add it for the first itme
-                    client.add(key, result)
-                    return result
-                else:
-                    # update=True
-                    #
-                    # avoid race conditions which may happen if multiple people
-                    # try to update at the same time
-                    for i in xrange(5):
-                        if client.cas(key, result):
-                            #logging.info("Setting memcache value and i equals %d"%i)
-                            return result
-                        client.gets(key)
-        
-        return update_wrapper(memoized_f, f)
+    def most_recent(cls, difficulty="all"):
+        q = Story.all().order('-created')
+        if difficulty != 'all':
+            q.filter('difficulty =', difficulty)
+        return q
     
 
 
@@ -300,22 +190,21 @@ class TestCase(unittest.TestCase):
         class AStory(db.Model):
             title = db.StringProperty()
             difficulty = db.StringProperty()
-            
+        
             @classmethod
-            @memcached(memcache_key="SOME_TITLE")
-            def by_title(cls, title=''):
+            @memcached(memcache_key="SOME_TITLE", class_method=True)
+            def by_title(cls,title=''):
                 return AStory.all().filter("title =", title).get()
-            
         
         
-        AStory(title="winners", difficulty="Beginner").put()
-        AStory(title="losers", difficulty="Advanced").put()
+        #AStory(title="winners", difficulty="Beginner").put()
+        #AStory(title="losers", difficulty="Advanced").put()
         
-        # Can it take filter arguments?
-        #s1 = AStory.by_title(memcache_key="winners", title="winners") # miss 1 
-        #cached_s1 = memcache.get("winners") # hit 1
-        #self.assertEqual(s1.difficulty, cached_s1.difficulty)
-        #self.assertEqual(s1.title, cached_s1.title)
+        #Can it take filter arguments?
+        # s1 = AStory.by_title(memcache_key="winners", title="winners") # miss 1 
+        # cached_s1 = memcache.get("winners") # hit 1
+        # self.assertEqual(s1.difficulty, cached_s1.difficulty)
+        # self.assertEqual(s1.title, cached_s1.title)
         
     
     def testMemcacheDecorator4(self):
@@ -354,8 +243,48 @@ class TestCase(unittest.TestCase):
         stats = memcache.get_stats()
         self.assertEqual(stats['hits'], 5)
         self.assertEqual(stats['misses'], 2)
+    
+    def testStoryMostRecent(self):
+        def Story_most_recent(difficulty="all", update=False):
+            """
+            returns the 50 most recent Storys of a given difficulty from memcache.
+            If update=True then it returns from the datastore and writes to memcache.
+
+            memcache_keys stored: 
+            'most_recent all'
+            'most_recent Beginner'
+            'most_recent Intermediate'
+            'most_recent Advanced'
+            """
+            key = "most_recent %s"%difficulty
+            return _Story_most_recent(memcache_key=key, update=update, difficulty=difficulty)
+        
+        @memcached(memcache_key="most_recent all")
+        def _Story_most_recent(difficulty="all"):
+            q = Story.most_recent(difficulty)
+            return [s for s in q.run(limit=50)]
         
         
+        Story(title="Harry Potter", difficulty="Intermediate").put()
+        Story_most_recent(difficulty="all", update=True) # miss 1
+        Story_most_recent(difficulty="Intermediate", update=True) # miss 2
+        
+        Story(title="A korhazban", difficulty="Beginner").put()
+        Story(title="An easy story", difficulty="Beginner").put()
+        Story_most_recent(update=True) # hit 1 and write to db
+        Story_most_recent(difficulty="Beginner", update=True) # miss 3
+        
+        
+        s = Story_most_recent(difficulty="Beginner") # hit 2
+        cached_s = memcache.get('most_recent Beginner') # hit 3
+        
+        self.assertEqual(2, len(s))
+        self.assertEqual([(a.title, a.difficulty) for a in s],
+                        [(a.title, a.difficulty) for a in cached_s])
+        
+        stats = memcache.get_stats()
+        self.assertEqual(stats['hits'],3)
+        self.assertEqual(stats['misses'], 3)
         
     
 
