@@ -180,10 +180,9 @@ def _Story_most_recent(difficulty="all"):
 
 def Story_unanswered(difficulty="all", update=False):
     """
-    returns a list of the 50 most recent Storys of a given difficulty 
-    which have unanswered questions (from memcache if possible).
-    If update=True then it returns from the datastore and writes to memcache.
-
+    returns a list of 50 most random Storys which have unanswered questions
+    (from memcache if possible). If update=True then it returns from the datastore and writes to memcache.
+    
     memcache_keys stored: 
     'unanswered all'
     'unanswered Beginner'
@@ -196,13 +195,12 @@ def Story_unanswered(difficulty="all", update=False):
 
 @memcached(memcache_key="unanswered all")
 def _Story_unanswered(difficulty="all"):
-    q = _query_Story_unanswered(difficulty)
-    return [s for s in q.run(limit=50)]
-
-
-def _query_Story_unanswered(difficulty="all"):
-    q = StoryExtras.all().filter('has_unanswered_Q =', True).run(limit=50)
-    # I think I can do keys_only=True and then retrieve the stories with a parent filter.
+    q = StoryExtras.all(keys_only=True).filter('has_unanswered_Q =', True).run(limit=50)
+    story_keys = [s.parent() for s in q]
+    stories = Story.get(story_keys) #stories is now a list of 50 random stories with unanswered Qs
+    if difficulty != 'all':
+        stories = filter(lambda s: s.difficulty == difficulty, stories)
+    return stories
 
 
 
