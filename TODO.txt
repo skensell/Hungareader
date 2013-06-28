@@ -1,31 +1,14 @@
 Next:
-
-Restructure stories query:
-	- Story.most_recent(difficulty="all")
-		- returns a list of 50 most_recent stories according to difficulty
-		- when a new story is added the difficulty="all" and the difficulty of the story are updated
-	- Story.unanswered(difficulty="all")
-		- returns a list of 50 most_recent stories which have unanswered questions according to difficulty
-		- when a new question is asked (if the story doesn't already have a new Q) or when a lone answer
-		is deleted we update the "all" and difficulty of story queries.
-	- At the front page:
-		- I will have to get rid of the red Q
-	
-
-Testing:
-	- It might be worth trying the new type of S.f = classmethod(f)
-	- Test my memcached decorator against the actual queries I'm going to do before inserting everywhere.
+	- On addstory.html I should require the author of the story.
 
 CACHING:
-	- stories
-	- mydesk
 	- readstory
+		- Do the Question and Answer queries.
+		- Do the StoryExtras queries.
+		- Do the vocablist/vocab queries.  Should I cache vocab? and How?
+		
+	- mydesk
 	- Make sure I'm updating at all the appropriate times (e.g. when adding a story)
-
-
-main.py:
-	- cache every commonly-used query.
-	- figure out how to use logging so that I can debug after shipping
 
 Create Footer:
 	Welcome/About/Feedback/Bugs:
@@ -33,10 +16,22 @@ Create Footer:
 
 General:
 	- Make favicon (a white lobster H with red backdrop)
+	- figure out how to use logging so that I can debug after shipping
 	- How to edit stories?
 	- How to prevent spam?
 
-	
+
+
+Lesson learned:
+	- The ancestor query is what allows for consistency between entity groups. I tried to add a question to the
+	database and then call Story_unanswered(update=True) and it wouldn't detect the new question.
+	I added the class StoryParent of which there will always be one instance which all stories will have as a parent.
+	Now certain methods will require the use of the kw argument parent=StoryParent_key(), like for example
+	Story.get_by_id kept returning None until I changed that.
+
+	- I now have a successfully functional Story_most_recent query and Story_unanswered.
+
+
 		
 		
 		

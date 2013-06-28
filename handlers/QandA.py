@@ -1,6 +1,6 @@
 from base import HandlerBase
 from models.kinds_and_queries import *
-
+import logging
 
 class QandABase(HandlerBase):
     def post(self):
@@ -13,17 +13,26 @@ class QandABase(HandlerBase):
         pass
     
     def update_unanswered(self, new_q=False):
+        """This is the method called by instances."""
         were_unanswered = self.s_extras.has_unanswered_Q
         unanswered_Qs = Question.unanswered(self.story.key())
-        if new_q:
-            self.s_extras.has_unanswered_Q = True
+        if (new_q and not were_unanswered) or (were_unanswered and not unanswered_Qs) \
+        or (not were_unanswered and unanswered_Qs):
+            self.toggle_has_unanswered()
             self.s_extras.put()
-        elif were_unanswered and not unanswered_Qs:
+            self.update_stories_query()
+    
+    def update_stories_query(self):
+        Story_unanswered(difficulty="all", update=True)
+        Story_unanswered(difficulty=self.story.difficulty, update=True)
+    
+    def toggle_has_unanswered(self):
+        if self.s_extras.has_unanswered_Q:
+            logging.info('toggling to False')
             self.s_extras.has_unanswered_Q = False
-            self.s_extras.put()
-        elif not were_unanswered and unanswered_Qs:
+        else:
+            logging.info('toggling to True')
             self.s_extras.has_unanswered_Q = True
-            self.s_extras.put()
     
 
 class AskQuestion(QandABase):

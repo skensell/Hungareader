@@ -10,9 +10,12 @@ class Stories(HandlerBase):
         type_filter = self.request.get('type_filter') or 'most_recent'
         difficulty = self.request.get('difficulty') or 'all'
         
-        stories_w_extras = recent_stories_w_extras(type_filter, difficulty);
+        if type_filter == 'most_recent':
+            stories = Story_most_recent(difficulty=difficulty) # try with arg instead of kw too
+        elif type_filter == 'unanswered':
+            stories = Story_unanswered(difficulty=difficulty)
         
-        self.render('stories.html', stories_w_extras=stories_w_extras, type_filter=type_filter,
+        self.render('stories.html', stories=stories, type_filter=type_filter,
                     difficulty=difficulty)    
     
 
@@ -36,14 +39,17 @@ class AddStory(HandlerBase):
             self.render("addstory.html", error=error_msg, title=title, summary=summary,
                         story=text, difficulty=difficulty, video_url=video_url )
         else:
+            # add the story and update cache
             uploader = self.student
             video_id = get_video_id(video_url)
-            s = Story(title=title, summary=summary, text=text,
+            s = Story(parent=StoryParent_key(), title=title, summary=summary, text=text,
                 difficulty=difficulty, uploader=uploader, video_id=video_id)
             story_key = s.put()
-            
             story_extras = StoryExtras(parent=story_key)
             story_extras.put()
+            
+            Story_most_recent(difficulty="all", update=True)
+            Story_most_recent(difficulty=difficulty, update=True)
             
             self.redirect("/%s"%story_key.id())
     

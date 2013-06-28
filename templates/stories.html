@@ -29,13 +29,13 @@
 	<p><span class="red">Q</span> - story has unanswered questions</p>
 </div> -->
 
-{% for (story, s_extras) in stories_w_extras %}
+{% for story in stories %}
 <div class="query_result">
 	<a href="/{{story.key().id()}}"><span class="make_clickable"></span></a>
 	<div class="title_row">
 		<h2 class="title">{{story.title}}</h2>
 		<div class="icon_row">
-			{% if s_extras.has_unanswered_Q %}
+			{% if False %}
 			<div class="red">&nbsp;Q</div>
 			{% endif %}
 		</div>

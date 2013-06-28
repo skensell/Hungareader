@@ -2,8 +2,9 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
-from utilities.security import encrypt, decrypt
-from utilities.memcache import memcached
+from utilities.security import encrypt, decrypt # encrypts/decrypts keys to url-safe strings
+from utilities.memcache import memcached # a decorator for memcache storage
+import logging
 
 # =========
 # = Kinds =
@@ -27,8 +28,15 @@ class Student(db.Model):
         return Student.all().filter('name =', name).get()
     
 
+class StoryParent(db.Model):
+    # The parent of every Story
+    # needed for consistency (which requires ancestor queries)
+    exists = db.BooleanProperty(default=True)
+
 class Story(db.Model):
+    # always has parent = StoryParent (of which there is only 1)
     title = db.StringProperty(required = True)
+    author = db.StringProperty(default="Unknown")
     summary = db.StringProperty(required = True) #must be < 500 characters
     text = db.TextProperty(required = True)
     video_id = db.StringProperty()
@@ -38,19 +46,20 @@ class Story(db.Model):
     
     @classmethod
     def most_recent(cls, difficulty="all"):
-        q = Story.all().order('-created')
+        q = Story.all().ancestor(StoryParent_key()).order('-created')
         if difficulty != 'all':
             q.filter('difficulty =', difficulty)
         return q
     
-    
     @classmethod
     def by_id(cls, sid):
-        return Story.get_by_id(sid)
+        # Now that each story has a parent, the parent kw is necessary
+        return Story.get_by_id(sid, parent=StoryParent_key())
     
     @classmethod
     def key_from_id(cls, sid):
-        return Story.get_by_id(sid).key()
+        # I should delete this function if nothing is using it.
+        return Story.get_by_id(sid, parent=StoryParent_key()).key()
     
 
 class Vocab(db.Model):
@@ -141,7 +150,7 @@ class Question(db.Model):
 class StoryExtras(db.Model):
     # always has a parent Story
     comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
-    has_unanswered_Q = db.BooleanProperty()
+    has_unanswered_Q = db.BooleanProperty(default=False)
     
     @classmethod
     def by_story(cls, story_key):
@@ -155,6 +164,31 @@ class StoryExtras(db.Model):
 # ===========
 # = Queries =
 # ===========
+"""
+Sometimes a query may want to have several keys in memcache (e.g. 'most_recent all' 
+and 'most_recent advanced'). If so, we wrap the query in a function which passes the appropriate key
+to be used for memcache.
+"""
+
+def Student_by_id():
+    pass
+
+def Student_by_name():
+    pass
+
+
+
+@memcached(memcache_key="StoryParent_key")
+def StoryParent_key():
+    """returns the key for the StoryParent model which serves as the parent to every Story.
+    If the StoryParent hasn't been created yet, it creates it.
+    """
+    key = StoryParent.all(keys_only=True).get()
+    if not key:
+        key = StoryParent().put()
+    return key
+
+
 
 
 def Story_most_recent(difficulty="all", update=False):
@@ -171,13 +205,6 @@ def Story_most_recent(difficulty="all", update=False):
     key = "most_recent %s"%difficulty
     return _Story_most_recent(memcache_key=key, update=update, difficulty=difficulty)
 
-
-@memcached(memcache_key="most_recent all")
-def _Story_most_recent(difficulty="all"):
-    q = Story.most_recent(difficulty)
-    return [s for s in q.run(limit=50)]
-
-
 def Story_unanswered(difficulty="all", update=False):
     """
     returns a list of 50 most random Storys which have unanswered questions
@@ -193,14 +220,56 @@ def Story_unanswered(difficulty="all", update=False):
     return _Story_unanswered(memcache_key=key, update=update, difficulty=difficulty)
 
 
+def StoryExtras_by_story():
+    pass
+
+
+
+
+
+
+
+
+
+
+def Question_by_story():
+    pass
+
+def Question_unanswered():
+    pass
+
+def Answer_by_question():
+    pass
+
+def Answer_one():
+    pass
+
+def Answer_get_all_keys():
+    pass
+
+
+
+# =====================
+# = Unwrapped Queries =
+# =====================
+
+@memcached(memcache_key="most_recent all")
+def _Story_most_recent(difficulty="all"):
+    q = Story.most_recent(difficulty)
+    return [s for s in q.run(limit=50)]
+
 @memcached(memcache_key="unanswered all")
 def _Story_unanswered(difficulty="all"):
-    q = StoryExtras.all(keys_only=True).filter('has_unanswered_Q =', True).run(limit=50)
+    """Returns a list of <= 50 stories with unanswered Qs.
+    Note that adding the ancestor filter is necessary for consistency."""
+    
+    q = StoryExtras.all(keys_only=True).ancestor(StoryParent_key()).filter('has_unanswered_Q =', True).run(limit=50)
     story_keys = [s.parent() for s in q]
     stories = Story.get(story_keys) #stories is now a list of 50 random stories with unanswered Qs
     if difficulty != 'all':
         stories = filter(lambda s: s.difficulty == difficulty, stories)
     return stories
+
 
 
 
