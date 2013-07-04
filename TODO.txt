@@ -1,18 +1,27 @@
 Next:
 
 CACHING:
+	- stories
+		- In stories.html when I call {{story.uploader.name}} and {{story.uploader.level}}
+		I have dereferenced the Student model and fetched it from the database.  This is WAY TOO MANY
+		database hits. I should figure out a way to have this stuff cached. I think the best way is
+		to change Story_most_recent to return tuples of (stories, uploaders). Uploaders can come from the
+		Student_by_key query which will also be cached.
 	- readstory
 		- Do the Question and Answer queries.
 		- Do the StoryExtras queries.
 		- Do the vocablist/vocab queries.  Should I cache vocab? and How?
-		
 	- mydesk
+	- Nick Johnson has written a cool MonkeyPatch for caching datastore gets locally without using memcache.
+	See:	http://stackoverflow.com/questions/1174075/appengine-cached-reference-property
+	
 
 Create Footer:
 	Welcome/About/Feedback/Bugs:
 	- create a welcome page for not-logged-in users and a front page
 
 General:
+	- create admin tools which I can access after shipping
 	- Make favicon (a white lobster H with red backdrop)
 	- figure out how to use logging so that I can debug after shipping
 	- How to edit stories?

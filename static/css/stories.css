@@ -106,3 +106,9 @@ div.query_result.highlighted p.summary {
     font-weight: 300;
     color: #666666;
 }
+
+.query_result .edit_story{
+    position: relative;
+    z-index: 2;
+}
+

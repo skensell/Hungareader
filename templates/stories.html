@@ -49,6 +49,9 @@
 		<li>tags: {{', '.join(story.tags)}}</li>
 	</ul>
 	<p class="summary">{{story.summary}}</p>
+	{% if story.uploader.name == student.name %}
+	<a class="edit_story" href="/editstory?story_id={{story.key().id()}}">edit story</a>
+	{% endif %}
 </div>
 {% endfor %}
 
