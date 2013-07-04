@@ -40,6 +40,7 @@ class Story(db.Model):
     summary = db.StringProperty(required = True) #must be < 500 characters
     text = db.TextProperty(required = True)
     video_id = db.StringProperty()
+    tags = db.ListProperty(unicode)
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
@@ -148,6 +149,7 @@ class Question(db.Model):
     
 
 class StoryExtras(db.Model):
+    """Contains properties of a given story which change frequently."""
     # always has a parent Story
     comments = db.TextProperty(default="Delete me. Write all over me. This is just a wall.")
     has_unanswered_Q = db.BooleanProperty(default=False)

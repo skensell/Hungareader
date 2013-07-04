@@ -6,7 +6,7 @@ from handlers.QandA import AskQuestion, DeleteQuestion, AnswerQuestion, DeleteAn
 from handlers.comments import SaveComments
 from handlers.mydesk import MyDesk
 from handlers.authentication import Login, LogOut, SignUp
-from handlers.tools import OneTimeUse
+from handlers.onetimeuse import OneTimeUse
 
 
 ##### URL-HANDLER MAPPING

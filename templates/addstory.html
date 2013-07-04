@@ -25,6 +25,11 @@
 	<input name="title" autofocus maxlength="200" value="{{title}}">
 	
 	<div>
+		<label for="author">author</label>
+	</div>
+	<input name="author" maxlength="200" value="{{author}}">
+	
+	<div>
 	<label for="summary">brief summary</label>
 	</div>
 	<textarea name="summary" maxlength="490" rows="2">{{summary}}</textarea>
@@ -36,6 +41,11 @@
 		<label for="video_url">youtube video url (optional)</label>
 	</div>
 	<input name="video_url" maxlength="500" value="{{video_url}}">
+	
+	<div>
+		<label for="tags">tags (optional, comma-separated list)</label>
+	</div>
+	<input name="tags" maxlength="200" value="{{tags}}">
 
 	<select name="difficulty" size="1">
 		<option value="" disabled selected>Choose difficulty</option>

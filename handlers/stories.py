@@ -28,30 +28,39 @@ class AddStory(HandlerBase):
     
     def post(self):
         title = self.request.get('title').strip()
+        author = self.request.get('author').strip()
         summary = self.request.get('summary').strip()
         text = self.request.get('story').rstrip()
         video_url = self.request.get('video_url').strip()
+        tags = map(lambda x: x.strip(), self.request.get('tags').split(','))
         difficulty = self.request.get('difficulty')
         
         error_msg = "Please fill out all required fields."
         
-        if not (title and summary and text):
-            self.render("addstory.html", error=error_msg, title=title, summary=summary,
+        if not (title and author and summary and text and difficulty):
+            self.render("addstory.html", error=error_msg, title=title, author=author, summary=summary,
                         story=text, difficulty=difficulty, video_url=video_url )
         else:
             # add the story and update cache
             uploader = self.student
             video_id = get_video_id(video_url)
-            s = Story(parent=StoryParent_key(), title=title, summary=summary, text=text,
-                difficulty=difficulty, uploader=uploader, video_id=video_id)
+            if len(tags) == 1 and tags[0] == '':
+                tags = []
+            
+            s = Story(parent=StoryParent_key(), title=title, author=author, summary=summary, text=text,
+                    difficulty=difficulty, uploader=uploader, video_id=video_id, tags=tags)
             story_key = s.put()
+            
             story_extras = StoryExtras(parent=story_key)
             story_extras.put()
             
-            Story_most_recent(difficulty="all", update=True)
-            Story_most_recent(difficulty=difficulty, update=True)
+            self.update_cache(difficulty)
             
             self.redirect("/%s"%story_key.id())
+    
+    def update_cache(self, difficulty):
+        Story_most_recent(difficulty="all", update=True)
+        Story_most_recent(difficulty=difficulty, update=True)
     
 
 class ReadStory(HandlerBase):

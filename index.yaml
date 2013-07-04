@@ -38,6 +38,19 @@ indexes:
   - name: created
     direction: desc
 
+- kind: Story
+  ancestor: yes
+  properties:
+  - name: created
+    direction: desc
+
+- kind: Story
+  ancestor: yes
+  properties:
+  - name: difficulty
+  - name: created
+    direction: desc
+
 - kind: VocabList
   properties:
   - name: story

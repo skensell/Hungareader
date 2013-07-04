@@ -36,14 +36,17 @@
 		<h2 class="title">{{story.title}}</h2>
 		<div class="icon_row">
 			{% if False %}
+			<!-- I've taken out this red Q -->
 			<div class="red">&nbsp;Q</div>
 			{% endif %}
 		</div>
 	</div>
 	<ul class="meta">
-		<li>{{story.difficulty}}</li>
+		<li>by {{story.author}}</li>
+		<li class="student_level {{story.difficulty.lower()}}">{{story.difficulty}}</li>
 		<li>Uploaded by <a class="uploader_name student_level {{story.uploader.level}}
 			disabled">{{story.uploader.name}}</a> on {{story.created.strftime("%b %d, %Y")}}</li>
+		<li>tags: {{', '.join(story.tags)}}</li>
 	</ul>
 	<p class="summary">{{story.summary}}</p>
 </div>

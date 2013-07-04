@@ -1,5 +1,4 @@
 Next:
-	- On addstory.html I should require the author of the story.
 
 CACHING:
 	- readstory
@@ -8,7 +7,6 @@ CACHING:
 		- Do the vocablist/vocab queries.  Should I cache vocab? and How?
 		
 	- mydesk
-	- Make sure I'm updating at all the appropriate times (e.g. when adding a story)
 
 Create Footer:
 	Welcome/About/Feedback/Bugs:

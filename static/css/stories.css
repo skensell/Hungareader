@@ -22,7 +22,7 @@
 
 
 /* ========================================= */
-/* = Make the whole query_result clickable = */
+/* = Makes the whole query_result clickable = */
 /* ========================================= */
 
 div.query_result {
@@ -64,6 +64,12 @@ div.query_result.highlighted p.summary {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+.query_result h4.author {
+    font-weight: 300;
+    margin: .2em 0;
+}
+
 .query_result div.icon_row{
     display: inline-block;
 }
