@@ -11,7 +11,7 @@ class Stories(HandlerBase):
         difficulty = self.request.get('difficulty') or 'all'
         
         if type_filter == 'most_recent':
-            stories = Story_most_recent(difficulty=difficulty) # try with arg instead of kw too
+            stories = Story_most_recent(difficulty=difficulty)
         elif type_filter == 'unanswered':
             stories = Story_unanswered(difficulty=difficulty)
         

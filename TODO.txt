@@ -1,18 +1,14 @@
 Next:
 
 CACHING:
-	- stories
-		- In stories.html when I call {{story.uploader.name}} and {{story.uploader.level}}
-		I have dereferenced the Student model and fetched it from the database.  This is WAY TOO MANY
-		database hits. I should figure out a way to have this stuff cached. I think the best way is
-		to change Story_most_recent to return tuples of (stories, uploaders). Uploaders can come from the
-		Student_by_key query which will also be cached.
 	- readstory
 		- Do the Question and Answer queries.
 		- Do the StoryExtras queries.
 		- Do the vocablist/vocab queries.  Should I cache vocab? and How?
 	- mydesk
 	- Nick Johnson has written a cool MonkeyPatch for caching datastore gets locally without using memcache.
+	The life of the cache is only one request, so it's only good when there are a lot of get requests for the
+	same entity during the request.
 	See:	http://stackoverflow.com/questions/1174075/appengine-cached-reference-property
 	
 
@@ -20,12 +16,17 @@ Create Footer:
 	Welcome/About/Feedback/Bugs:
 	- create a welcome page for not-logged-in users and a front page
 
-General:
+
+General TODOs:
 	- create admin tools which I can access after shipping
+		- page with users, stats, etc. (this could be public too)
+		- page which allows editing and deleting entities and their descendants (like datastore viewer but better)
+		- find a way for me and Balázs to be able to always see the "edit" and "delete" buttons on every page.
 	- Make favicon (a white lobster H with red backdrop)
-	- figure out how to use logging so that I can debug after shipping
-	- How to edit stories?
+	- Create an editstory page.
+	- How can students edit their info?
 	- How to prevent spam?
+	- figure out how to use logging so that I can debug after shipping
 
 
 
@@ -36,7 +37,6 @@ Lesson learned:
 	Now certain methods will require the use of the kw argument parent=StoryParent_key(), like for example
 	Story.get_by_id kept returning None until I changed that.
 
-	- I now have a successfully functional Story_most_recent query and Story_unanswered.
 
 
 		

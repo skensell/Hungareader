@@ -27,6 +27,10 @@ class Student(db.Model):
     def by_name(cls, name):
         return Student.all().filter('name =', name).get()
     
+    @classmethod
+    def by_key(cls, student_key):
+        return Student.get(student_key)
+    
 
 class StoryParent(db.Model):
     # The parent of every Story
@@ -171,6 +175,17 @@ Sometimes a query may want to have several keys in memcache (e.g. 'most_recent a
 and 'most_recent advanced'). If so, we wrap the query in a function which passes the appropriate key
 to be used for memcache.
 """
+@memcached(memcache_key="StoryParent_key")
+def StoryParent_key():
+    """returns the key for the StoryParent model which serves as the parent to every Story.
+    If the StoryParent hasn't been created yet, it creates it.
+    """
+    key = StoryParent.all(keys_only=True).get()
+    if not key:
+        key = StoryParent().put()
+    return key
+
+
 
 def Student_by_id():
     pass
@@ -178,6 +193,23 @@ def Student_by_id():
 def Student_by_name():
     pass
 
+def Student_by_key(student_key=None, update=False):
+    """
+    Retrieves a Student given the student's key.
+    
+    Arguments:
+        student_key: the datastore key for the student (type: db.Key)
+    
+    Returns:
+        a Student entity
+        
+    memcache keys stored:
+        str(student_key) for each different student_key given
+    """
+    if student_key:
+        key = str(student_key)
+        return _Student_by_key(memcache_key=key, update=update, student_key=student_key)
+    
 
 
 @memcached(memcache_key="StoryParent_key")
@@ -195,8 +227,15 @@ def StoryParent_key():
 
 def Story_most_recent(difficulty="all", update=False):
     """
-    returns a list of the 50 most recent Storys of a given difficulty (from memcache if possible).
-    If update=True then it returns from the datastore and writes to memcache.
+    A query for the 50 most recent stories of a given difficulty.
+    
+    Arguments:
+        difficulty: 'all', 'Beginner', 'Intermediate', or 'Advanced'
+        update: Boolean. Set to true if we want to retrieve from datastore and overwrite memcache.
+    
+    Returns:
+        A list of at most 50 (story, uploader) tuples where the uploader is the Student who
+        uploaded the given story.
     
     memcache_keys stored: 
     'most_recent all'
@@ -209,9 +248,16 @@ def Story_most_recent(difficulty="all", update=False):
 
 def Story_unanswered(difficulty="all", update=False):
     """
-    returns a list of 50 most random Storys which have unanswered questions
-    (from memcache if possible). If update=True then it returns from the datastore and writes to memcache.
+    A query for at most 50 stories which have unanswered questions.
     
+    Arguments:
+        difficulty: 'all', 'Beginner', 'Intermediate', or 'Advanced'
+        update: Boolean. Set to true if we want to retrieve from datastore and overwrite memcache.
+    
+    Returns:
+        A list of at most 50 (story, uploader) tuples where the uploader is the Student who
+        uploaded the given story. The stories may be in a random order.
+        
     memcache_keys stored: 
     'unanswered all'
     'unanswered Beginner'
@@ -258,47 +304,29 @@ def Answer_get_all_keys():
 @memcached(memcache_key="most_recent all")
 def _Story_most_recent(difficulty="all"):
     q = Story.most_recent(difficulty)
-    return [s for s in q.run(limit=50)]
+    stories = [s for s in q.run(limit=50)]
+    uploaders = [Student_by_key(Story.uploader.get_value_for_datastore(s)) for s in stories]
+    return zip(stories, uploaders)
 
 @memcached(memcache_key="unanswered all")
 def _Story_unanswered(difficulty="all"):
-    """Returns a list of <= 50 stories with unanswered Qs.
-    Note that adding the ancestor filter is necessary for consistency."""
-    
     q = StoryExtras.all(keys_only=True).ancestor(StoryParent_key()).filter('has_unanswered_Q =', True).run(limit=50)
     story_keys = [s.parent() for s in q]
-    stories = Story.get(story_keys) #stories is now a list of 50 random stories with unanswered Qs
+    stories = Story.get(story_keys) # stories is now a list of 50 random stories with unanswered Qs
+    
     if difficulty != 'all':
         stories = filter(lambda s: s.difficulty == difficulty, stories)
-    return stories
+    
+    uploaders = [Student_by_key(Story.uploader.get_value_for_datastore(s)) for s in stories]
+    return zip(stories, uploaders)
+
+
+@memcached()
+def _Student_by_key(student_key):
+    return Student.get(student_key)
 
 
 
 
-# old queries
 
-def recent_stories_w_extras(type_filter='most_recent', difficulty='all', update=False):
-    """
-    The main query called by Stories. Looks in memcache first unless update=True.
-    
-    returns: [(story, story_extras) for story satisfying filters]
-    """
-    key = 'type_filter:%s difficulty:%s'% (type_filter, difficulty)
-    
-    S = []
-    
-    stories_q = Story.most_recent()
-    
-    if difficulty != 'all':
-        stories_q.filter('difficulty =', difficulty)
-    
-    for s in stories_q.run(limit=50):
-        s_extras = StoryExtras.by_story(s.key())
-    
-        if type_filter == 'most_recent':
-            S.append((s,s_extras))
-        elif type_filter == 'unanswered':
-            if s_extras.has_unanswered_Q:
-                S.append((s,s_extras))
-            
-    return S
+
