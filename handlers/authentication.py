@@ -1,7 +1,7 @@
 from base import HandlerBase
-
-from models.kinds_and_queries import Student
 import re, hashlib, random, string
+
+from models.kinds_and_queries import Student, Student_by_name
 
 class Login(HandlerBase):
     def get(self):
@@ -10,7 +10,7 @@ class Login(HandlerBase):
     def post(self):
         name = self.request.get('username')
         pw = self.request.get('password')
-        s = Student.by_name(name)
+        s = Student_by_name(name)
         if not s:
             self.render("login.html", error_username='That username does not exist.')
         else:
@@ -40,7 +40,7 @@ class SignUp(HandlerBase):
         
         have_error, template_params = validate(new_user, new_pwd, verify, level, email)
         #validate() checks regexps and level, now we check if username is taken
-        if Student.by_name(new_user):
+        if Student_by_name(new_user):
                template_params['error_new_user'] = "That username is already taken."
                have_error = True
         

@@ -3,7 +3,7 @@ import jinja2
 import os
 
 from utilities.security import make_secure_val, check_secure_val
-from models.kinds_and_queries import Student
+from models.kinds_and_queries import Student_by_id
 
 # Note that I needed an extra os.path.dirname to get to the Hungareader directory
 template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')
@@ -45,7 +45,6 @@ class HandlerBase(RequestHandler):
     def initialize(self, *a, **kw): #runs on every request and checks if user is logged in
         RequestHandler.initialize(self, *a, **kw)
         sid = self.read_secure_cookie('student_id')
-        # I should change this to Student_by_id
-        self.student = sid and Student.by_id(int(sid))
+        self.student = sid and Student_by_id(int(sid))
     
 

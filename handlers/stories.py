@@ -65,7 +65,7 @@ class AddStory(HandlerBase):
 
 class ReadStory(HandlerBase):
     def get(self, story_id):
-        story = Story.by_id(int(story_id))
+        story = Story_by_id(int(story_id))
         story_key = story.key()
         # logging.info([story.text])
         

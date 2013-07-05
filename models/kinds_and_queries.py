@@ -12,24 +12,12 @@ import logging
 
 
 class Student(db.Model):
-    """It also has the classmethod 'register' defined in authentication.py """
     name = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
     email = db.StringProperty()
     level = db.StringProperty(required = True)
     date_joined = db.DateProperty(auto_now_add=True)
-    
-    @classmethod
-    def by_id(cls, sid):
-        return Student.get_by_id(sid)
-    
-    @classmethod
-    def by_name(cls, name):
-        return Student.all().filter('name =', name).get()
-    
-    @classmethod
-    def by_key(cls, student_key):
-        return Student.get(student_key)
+    # The classmethod 'register' is defined in authentication.py
     
 
 class StoryParent(db.Model):
@@ -48,24 +36,6 @@ class Story(db.Model):
     difficulty = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
-    
-    @classmethod
-    def most_recent(cls, difficulty="all"):
-        q = Story.all().ancestor(StoryParent_key()).order('-created')
-        if difficulty != 'all':
-            q.filter('difficulty =', difficulty)
-        return q
-    
-    @classmethod
-    def by_id(cls, sid):
-        # Now that each story has a parent, the parent kw is necessary
-        return Story.get_by_id(sid, parent=StoryParent_key())
-    
-    @classmethod
-    def key_from_id(cls, sid):
-        # I should delete this function if nothing is using it.
-        return Story.get_by_id(sid, parent=StoryParent_key()).key()
-    
 
 class Vocab(db.Model):
     hungarian = db.StringProperty(required = True)
@@ -171,34 +141,68 @@ class StoryExtras(db.Model):
 # = Queries =
 # ===========
 """
-Sometimes a query may want to have several keys in memcache (e.g. 'most_recent all' 
-and 'most_recent advanced'). If so, we wrap the query in a function which passes the appropriate key
-to be used for memcache.
+We wrap queries and gets in a function which passes the appropriate key to be used for memcache.
 """
-@memcached(memcache_key="StoryParent_key")
-def StoryParent_key():
-    """returns the key for the StoryParent model which serves as the parent to every Story.
-    If the StoryParent hasn't been created yet, it creates it.
+
+def StoryParent_key(update=False):
     """
-    key = StoryParent.all(keys_only=True).get()
-    if not key:
-        key = StoryParent().put()
-    return key
+    Gets the key of the lone StoryParent entity.
+    
+    Arguments:
+        update: Boolean. If set to True, then it retrieves the key from the datastore and writes to memcache.
+    
+    Returns:
+        The key of StoryParent.
+        
+    memcache keys stored:
+        'StoryParent_key'
+    """
+    return _StoryParent_key(update=update)
 
 
 
-def Student_by_id():
-    pass
+def Student_by_id(student_id=None, update=False):
+    """
+    Gets a Student object given the student's id.
+    
+    Arguments:
+        student_id: if s is a student, this corresponds to s.key().id()
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+    
+    Returns:
+        a Student entity
+        
+    memcache keys stored:
+        str(student_id) for each different student_id
+    """
+    if student_id:
+        key = str(student_id)
+        return _Student_by_id(memcache_key=key, update=update, student_id=student_id)
 
-def Student_by_name():
-    pass
+def Student_by_name(name=None, update=False):
+    """
+    Gets a Student given the student's username. Used mainly for authentication.
+    
+    Arguments:
+        name: the name of the student (type: unicode)
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+    
+    Returns:
+        a Student entity
+        
+    memcache keys stored:
+        name for each different name given
+    """
+    if name:
+        return _Student_by_name(memcache_key=name, update=update, name=name) 
 
 def Student_by_key(student_key=None, update=False):
     """
-    Retrieves a Student given the student's key.
+    Gets a Student given the student's key.
     
     Arguments:
         student_key: the datastore key for the student (type: db.Key)
+        update: Boolean. Set to True to access datastore and overwrite memcache.
     
     Returns:
         a Student entity
@@ -212,22 +216,10 @@ def Student_by_key(student_key=None, update=False):
     
 
 
-@memcached(memcache_key="StoryParent_key")
-def StoryParent_key():
-    """returns the key for the StoryParent model which serves as the parent to every Story.
-    If the StoryParent hasn't been created yet, it creates it.
-    """
-    key = StoryParent.all(keys_only=True).get()
-    if not key:
-        key = StoryParent().put()
-    return key
-
-
-
 
 def Story_most_recent(difficulty="all", update=False):
     """
-    A query for the 50 most recent stories of a given difficulty.
+    Gets the 50 most recent stories of a given difficulty.
     
     Arguments:
         difficulty: 'all', 'Beginner', 'Intermediate', or 'Advanced'
@@ -248,7 +240,7 @@ def Story_most_recent(difficulty="all", update=False):
 
 def Story_unanswered(difficulty="all", update=False):
     """
-    A query for at most 50 stories which have unanswered questions.
+    Gets at most 50 stories which have unanswered questions.
     
     Arguments:
         difficulty: 'all', 'Beginner', 'Intermediate', or 'Advanced'
@@ -267,16 +259,27 @@ def Story_unanswered(difficulty="all", update=False):
     key = "unanswered %s"%difficulty
     return _Story_unanswered(memcache_key=key, update=update, difficulty=difficulty)
 
+def Story_by_id(story_id=None, update=False):
+    """
+    Gets a Story object given the story's id.
+    
+    Arguments:
+        story_id: This corresponds to s.key().id() if s is a story.
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+    
+    Returns:
+        a Story entity
+    
+    memcache keys stored:
+        str(story_id) for each different story_id
+    """
+    if story_id:
+        return _Story_by_id(memcache_key=str(story_id), update=update, story_id=story_id)
+
+
 
 def StoryExtras_by_story():
     pass
-
-
-
-
-
-
-
 
 
 
@@ -285,6 +288,7 @@ def Question_by_story():
 
 def Question_unanswered():
     pass
+
 
 def Answer_by_question():
     pass
@@ -301,11 +305,38 @@ def Answer_get_all_keys():
 # = Unwrapped Queries =
 # =====================
 
+@memcached(memcache_key="StoryParent_key")
+def _StoryParent_key():
+    key = StoryParent.all(keys_only=True).get()
+    if not key:
+        key = StoryParent().put()
+    return key
+
+
+
+@memcached()
+def _Student_by_key(student_key):
+    return Student.get(student_key)
+
+@memcached()
+def _Student_by_id(student_id):
+    return Student.get_by_id(student_id)
+
+@memcached()
+def _Student_by_name(name):
+    return Student.all().filter('name =', name).get()
+
+
+
 @memcached(memcache_key="most_recent all")
 def _Story_most_recent(difficulty="all"):
-    q = Story.most_recent(difficulty)
+    q = Story.all().ancestor(StoryParent_key()).order('-created')
+    if difficulty != 'all':
+        q.filter('difficulty =', difficulty)
+        
     stories = [s for s in q.run(limit=50)]
     uploaders = [Student_by_key(Story.uploader.get_value_for_datastore(s)) for s in stories]
+    
     return zip(stories, uploaders)
 
 @memcached(memcache_key="unanswered all")
@@ -320,13 +351,9 @@ def _Story_unanswered(difficulty="all"):
     uploaders = [Student_by_key(Story.uploader.get_value_for_datastore(s)) for s in stories]
     return zip(stories, uploaders)
 
-
 @memcached()
-def _Student_by_key(student_key):
-    return Student.get(student_key)
-
-
-
+def _Story_by_id(story_id):
+    return Story.get_by_id(story_id, parent=StoryParent_key())
 
 
 

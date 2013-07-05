@@ -1,6 +1,11 @@
 from functools import update_wrapper
 from google.appengine.api import memcache
 
+"""
+Notes about memcache:
+    Student_by_id is called on every request.
+    StoryParent_key is called very frequently too behind the scenes.
+"""
 
 class memcached(object):
     """

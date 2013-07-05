@@ -16,7 +16,7 @@ class AddVocab(HandlerBase):
         
         # add the word to the vocab list
         # these 4 lines can be abstracted out
-        story = Story.by_id(int(self.request.get('story_id')))
+        story = Story_by_id(int(self.request.get('story_id')))
         vl = VocabList.retrieve(self.student.key(), story.key())
         if not vl:
             vl = VocabList(student=self.student, story=story)
@@ -35,7 +35,7 @@ class AddVocab(HandlerBase):
 
 class DeleteVocab(HandlerBase):
     def post(self):
-        story = Story.by_id(int(self.request.get('story_id')))
+        story = Story_by_id(int(self.request.get('story_id')))
         vl = VocabList.retrieve(self.student.key(), story.key())
         
         vl_indices = map(int,self.request.POST.getall('vl_indices[]'))
@@ -45,7 +45,7 @@ class DeleteVocab(HandlerBase):
 
 class ImportVocab(HandlerBase):
     def post(self):
-        story = Story.by_id(int(self.request.get('story_id')))
+        story = Story_by_id(int(self.request.get('story_id')))
         
         vl = VocabList.retrieve(self.student.key(), story.key())
         if not vl:
@@ -60,7 +60,7 @@ class ImportVocab(HandlerBase):
 
 class ReorderVocab(HandlerBase):
     def post(self):
-        story = Story.by_id(int(self.request.get('story_id')))
+        story = Story_by_id(int(self.request.get('story_id')))
         vl = VocabList.retrieve(self.student.key(), story.key())
         
         keys_e = self.request.POST.getall('keys[]')

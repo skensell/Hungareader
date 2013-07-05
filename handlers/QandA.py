@@ -4,7 +4,7 @@ import logging
 
 class QandABase(HandlerBase):
     def post(self):
-        self.story = Story.by_id(int(self.request.get('story_id')))
+        self.story = Story_by_id(int(self.request.get('story_id')))
         self.s_extras = StoryExtras.by_story(self.story.key())
         
         self.action()
