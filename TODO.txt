@@ -1,5 +1,20 @@
 Next:
 
+Caching Vocab and VocabList:
+	html/css	
+		Introduce a 'save my vocab' button which will put the VocabList in the datastore.
+	js
+		The button will only be clickable when there are changes to save.
+		When a user navigates away or tries to switch mode, it will
+		ask them to confirm whether they'd like to lose their changes.
+	
+	Why introduce this button?
+		- Far fewer datastore hits.
+		- Every time somebody submits a new vocab, it will only edit the DOM.  When the 'save my vocab'
+		button is clicked, it will create new vocab instances and overwrite the vocab list.
+		- I will actually be able to get rid of ImportVocab entirely, modifying it
+		so that it just edits the DOM and only saves my_vocab when the button is clicked.
+
 CACHING:
 	- readstory
 		- Do the Question and Answer queries.
@@ -47,6 +62,7 @@ Ideas for the 2nd launch:
 	- AUDIO with soundcloud
 	- Leaderboard and student stats
 	- Add dictionary-lookup capability somehow
+	- Send mail when a user signs up.  Accept mail too.
 	
 	little things:
 	- add location property to questions

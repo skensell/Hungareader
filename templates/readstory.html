@@ -34,6 +34,9 @@
 
 {% endblock %}
 
+
+
+
 {% block right_side %}
 <!-- The below has fixed position so it doesn't actually matter that it's in right_side -->
 <div id="vocab_area_container">
@@ -52,6 +55,10 @@
 					<li><a href="#" id="reorder_tool"><i class="icon-reorder"></i> reorder
 						<span class="on_switch">(on)</span></a></li>
 				</ul>
+			</div>
+			
+			<div id="save_my_vocab">
+				<a href="#"><i class="icon-save"></i> save</a>
 			</div>
 			
 			<div id="normal_instructions">
@@ -74,6 +81,7 @@
 			
 			<div class="error" id="error_msg"></div>
 			<hr/>
+			
 			<div id="instructions_container">
 				<form action="/addvocab" method="post" accept-charset="utf-8" id="add_vocab">
 						<input name="new_word" maxlength="100" placeholder="new Hungarian" id="new_word">

@@ -1,26 +1,18 @@
 /*The content_container has width 60em*/
-#content_container {
-    min-width: 45em;
-}
+#content_container {min-width: 45em;}
 
-#left {
-    display: none;
-}
+#left {display: none;}
 
-#center {
-    width: 35em;
-}
+#center {width: 35em;}
 
-#right {
-    width: 9em;
-}
+#right {width: 9em;}
 
 /* ============== */
 /* = Story text = */
 /* ============== */
 
 p#story_text {
-    /*It's impossible to justify text this way.*/
+    /*It's impossible to justify story_text this way.*/
     white-space: pre-wrap;
 }
 
@@ -100,8 +92,17 @@ p {
 }
 
 
+#my_vocab {
+    margin-top: 1.1em;
+}
 
-
+div#save_my_vocab {
+    position: fixed;
+    z-index: 2;
+    top: 7em;
+    right: 9em;
+    
+}
 
 
 /* ==================== */
@@ -114,7 +115,7 @@ div#my_vocab_tools {
     z-index: 2;
     top:7em;
 /*    left: 52.3em;*/
-    right: 10em;
+    right: 13em;
 }
 
 div#my_vocab_tools div#pencil_icon_container{

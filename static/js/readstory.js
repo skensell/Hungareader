@@ -4,7 +4,7 @@ $(document).ready(function(){
     window.$my_vocab_tbody = $('#my_vocab #my_vocab_table tbody');
 
     
-    // What to show if not logged in
+    // What to show if not logged in. isLoggedIn is defined in base.js
     if (!window.isLoggedIn) {
         $('div#vocab_area_container').html('<p>Log in to create your own personal vocabulary' + 
                                             ' list for this story ' +

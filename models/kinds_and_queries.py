@@ -37,6 +37,8 @@ class Story(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
 
+
+
 class Vocab(db.Model):
     hungarian = db.StringProperty(required = True)
     meaning = db.StringProperty(required = True)
