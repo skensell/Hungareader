@@ -1,6 +1,8 @@
 from base import HandlerBase
 from models.kinds_and_queries import *
 
+import random
+
 class MyDeskBase(HandlerBase):
     def initialize(self, *a, **kw):
         HandlerBase.initialize(self, *a, **kw)
