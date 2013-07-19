@@ -71,11 +71,11 @@ class ReadStory(HandlerBase):
         
         my_vocab = []
         if self.student:
-            vl = VocabList.retrieve(self.student.key(), story_key)
+            vl = VocabList_retrieve(student_key=self.student.key(), story_key=story_key)
             my_vocab = Vocab.words_and_keys(vl)
         
         v_lists = []
-        for vl in VocabList.by_story(story_key):
+        for vl in VocabList_by_story(story_key):
             vocabs = Vocab.words_and_keys(vl)
             num_words = len(vocabs)
             v_lists.append((vl, num_words, vocabs))

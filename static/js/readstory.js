@@ -1,11 +1,4 @@
 $(document).ready(function(){
-    // global variables
-    window.story_id = window.location.pathname.slice(1);
-    window.$my_vocab_tbody = $('#my_vocab #my_vocab_table tbody');
-    window.my_vocab_has_changes = false;
-    window.$button_save_my_vocab = $('button#save_my_vocab');
-
-    
     // What to show if not logged in. isLoggedIn is defined in base.js
     if (!window.isLoggedIn) {
         $('div#vocab_area_container').html('<p>Log in to create your own personal vocabulary' + 
@@ -14,6 +7,12 @@ $(document).ready(function(){
         $('div#right_tool_bar').hide();
         return false;
     }
+    
+    // global variables
+    window.story_id = window.location.pathname.slice(1);
+    window.$my_vocab_tbody = $('#my_vocab #my_vocab_table tbody');
+    window.my_vocab_has_changes = false;
+    window.$button_save_my_vocab = $('button#save_my_vocab');
     
     
     initVocabArea();
@@ -39,9 +38,6 @@ function initMyVocab(vocab_area){
     var $error_msg = $('div#error_msg');
     var $input_new_word = $('input#new_word');
     var $input_new_def = $('input#new_def');
-    
-    buildVocabTools($add_vocab_form);
-    buildVocabToolMenu($add_vocab_form);
     
     // normal mode
     function show_error(msg){
@@ -82,6 +78,29 @@ function initMyVocab(vocab_area){
     
     // keep it scrolled down after submitting or focusing to new_word
     $input_new_word.focus(function(){vocab_area.scrollTop = vocab_area.scrollHeight;});
+    
+    // don't let them navigate away if they have changes
+    confirmLeaving();
+    
+    buildVocabTools($add_vocab_form);
+    buildVocabToolMenu($add_vocab_form);
+}
+
+function confirmLeaving(){
+    // code taken from http://stackoverflow.com/questions/1704533/intercept-page-exit-event
+    window.onbeforeunload = function (e) {
+        if (my_vocab_has_changes){
+            var message = "You have vocabulary changes which need to be saved.",
+            e = e || window.event;
+            // For IE and Firefox
+            if (e) {
+            e.returnValue = message;
+            }
+
+            // For Safari
+            return message;
+        }
+    };
 }
 
 function allowSaveMyVocab(){

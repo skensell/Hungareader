@@ -5,6 +5,9 @@ from google.appengine.api import memcache
 Notes about memcache:
     Student_by_id is called on every request.
     StoryParent_key is called very frequently too behind the scenes.
+    This decorator could be improved if instead of reading and updating, sometimes we
+    used the known value to update it.  Then we save db reads.
+    Or it would make sense to just update queries when they're actually used.
 """
 
 class memcached(object):

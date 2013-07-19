@@ -7,16 +7,26 @@ class VocabBase(HandlerBase):
             self.redirect('/signup')
         else:        
             self.story = Story_by_id(int(self.request.get('story_id')))
-            self.vocabList = VocabList.retrieve(self.student.key(), self.story.key())
+            self.vocabList = VocabList_retrieve(student_key=self.student.key(), story_key=self.story.key())
             if not self.vocabList:
-                self.vocabList = VocabList(student=self.student, story=self.story)
+                self.vocabList = VocabList(parent=VocabListParent_key(),student=self.student, story=self.story)
         
             self.action()
+            self.update_cache()
     
     def action(self):
         pass
     
-
+    def update_cache(self):
+        VocabList_retrieve(update=True, student_key=self.student.key(), story_key=self.story.key())
+        VocabList_by_student(update=True, student_key=self.student.key())
+        
+        # if this person was one of the first 15 to create a vocab list for this story then we should update
+        # the VocabList_by_story query used to get user vocab.
+        first_15_students = [vl.student for vl in VocabList_by_story(story_key=self.story.key())]
+        if self.student.key() in first_15_students:
+            VocabList_by_story(update=True, story_key=self.story.key())
+    
 
 class UpdateVocab(VocabBase):
     def action(self):
@@ -35,7 +45,6 @@ class UpdateVocab(VocabBase):
         
         self.vocabList.vocab_list = vocab_keys
         self.vocabList.put()
-        # update VocabList queries
     
 
 

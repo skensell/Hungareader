@@ -6,7 +6,7 @@ import random
 class MyDeskBase(HandlerBase):
     def initialize(self, *a, **kw):
         HandlerBase.initialize(self, *a, **kw)
-        self.v_lists = self.student and [vl for vl in VocabList.by_student(self.student.key()) if vl.vocab_list]
+        self.v_lists = self.student and [vl for vl in VocabList_by_student(self.student.key()) if vl.vocab_list]
         self.stories = self.student and [(vl.story, encrypt(str(vl.story.key()))) for vl in self.v_lists]
     
 

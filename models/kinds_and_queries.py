@@ -10,6 +10,29 @@ import logging
 # = Kinds =
 # =========
 
+# ===================
+# = Database Schema =
+# ===================
+#                   
+#
+# StoryParent           VocabListParent           Vocab
+#     |                     |
+#   Story               VocabList
+#   /   \
+#  Q    StoryExtras
+#  |
+#  A   
+
+class StoryParent(db.Model):
+    # The parent of every Story
+    # needed for consistency (which requires ancestor queries)
+    exists = db.BooleanProperty(default=True)
+
+class VocabListParent(db.Model):
+    # The parent of every vocab List
+    # needed for consistency
+    exists = db.BooleanProperty(default=True)
+
 
 class Student(db.Model):
     name = db.StringProperty(required = True)
@@ -19,11 +42,6 @@ class Student(db.Model):
     date_joined = db.DateProperty(auto_now_add=True)
     # The classmethod 'register' is defined in authentication.py
     
-
-class StoryParent(db.Model):
-    # The parent of every Story
-    # needed for consistency (which requires ancestor queries)
-    exists = db.BooleanProperty(default=True)
 
 class Story(db.Model):
     # always has parent = StoryParent (of which there is only 1)
@@ -37,15 +55,9 @@ class Story(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     uploader = db.ReferenceProperty(Student)
 
-
-
 class Vocab(db.Model):
     hungarian = db.StringProperty(required = True)
     meaning = db.StringProperty(required = True)
-    
-    @classmethod
-    def by_id(cls, vid):
-        return Vocab.get_by_id(vid)
     
     @classmethod
     def retrieve(cls, hungarian, meaning):
@@ -62,27 +74,12 @@ class Vocab(db.Model):
     
 
 class VocabList(db.Model):
+    # always has VocabListParent as its parent
     student = db.ReferenceProperty(Student)
     story = db.ReferenceProperty(Story)
     vocab_list = db.ListProperty(db.Key) #a list of vocab_words
     created = db.DateTimeProperty(auto_now_add = True)
-    
-    #I could check the site below for reducing .get() methods
-    #http://stackoverflow.com/questions/4719700/list-of-references-in-google-app-engine-for-python/4730415#4730415
-    @classmethod
-    def retrieve(cls, student_key, story_key):
-        #note that the student= is no good.  The SPACE IS NECESSARY.
-        return VocabList.all().filter("student =", student_key).filter("story =", story_key).get()
-    
-    @classmethod
-    def by_story(cls, story_key):
-        # order this by created
-        return VocabList.all().filter("story =", story_key).run(limit=10)
-    
-    @classmethod
-    def by_student(cls, student_key):
-        return VocabList.all().filter("student =", student_key).order('-created').run(limit=100)
-    
+
 
 class Answer(db.Model):
     # always has a question as its parent
@@ -160,6 +157,21 @@ def StoryParent_key(update=False):
         'StoryParent_key'
     """
     return _StoryParent_key(update=update)
+
+def VocabListParent_key(update=False):
+    """
+    Gets the key of the lone VocabListParent entity.
+    
+    Arguments:
+        update: Boolean. If set to True, then it retrieves the key from the datastore and writes to memcache.
+    
+    Returns:
+        The key of VocabListParent.
+    
+    memcache keys stored:
+        'VocabListParent_key'
+    """
+    return _VocabListParent_key(update=update)
 
 
 
@@ -285,6 +297,68 @@ def StoryExtras_by_story():
 
 
 
+def VocabList_retrieve(student_key=None, story_key=None, update=False):
+    """
+    Gets a VocabList object given the keys of the student and story.
+    
+    Arguments:
+        student_key: typically self.student.key()
+        story_key: the key of the story
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+        
+    
+    Returns:
+        a VocabList entity
+    
+    memcache keys stored:
+        'vocablist str(student_key) str(story_key)' for each student and story
+    """
+    if not (student_key and story_key):
+        return None
+    key = 'vocablist %s %s'%(student_key, story_key)
+    return _VocabList_retrieve(memcache_key=key, update=update, student_key=student_key, story_key=story_key)
+
+def VocabList_by_story(story_key=None, update=False):
+    """
+    Gets a VocabList object given the key of the story which it references.
+    
+    Arguments:
+        story_key: the key of the story
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+        
+    Returns:
+        a list of 15 VocabList entities sorted ascending by created
+    
+    memcache keys stored:
+        'vocablist str(story_key)' for each story
+    """
+    if not story_key:
+        return None
+    key = 'vocablist %s'%story_key
+    return _VocabList_by_story(memcache_key=key, update=update, story_key=story_key)
+
+def VocabList_by_student(student_key=None, update=False):
+    """
+    Gets a VocabList object given the key of the student which it references.
+    
+    Arguments:
+        student: the key of the student
+        update: Boolean. Set to True to access datastore and overwrite memcache.
+    
+    Returns:
+        a list of <=200 VocabList entities sorted descending by created
+    
+    memcache keys stored:
+        'vocablist str(student_key)' for each story
+    """
+    if not student_key:
+        return None
+    key = 'vocablist %s'%student_key
+    return _VocabList_by_student(memcache_key=key, update=update, student_key=student_key)
+
+
+
+
 def Question_by_story():
     pass
 
@@ -314,6 +388,12 @@ def _StoryParent_key():
         key = StoryParent().put()
     return key
 
+@memcached(memcache_key="VocabListParent_key")
+def _VocabListParent_key():
+    key = VocabListParent.all(keys_only=True).get()
+    if not key:
+        key = VocabListParent().put()
+    return key
 
 
 @memcached()
@@ -358,4 +438,14 @@ def _Story_by_id(story_id):
     return Story.get_by_id(story_id, parent=StoryParent_key())
 
 
+@memcached()
+def _VocabList_retrieve(student_key, story_key):
+    return VocabList.all().ancestor(VocabListParent_key()).filter("student =", student_key).filter("story =", story_key).get()    
 
+@memcached()
+def _VocabList_by_story(story_key):
+    return [vl for vl in VocabList.all().ancestor(VocabListParent_key()).filter("story =", story_key).order('created').run(limit=15)]
+
+@memcached()
+def _VocabList_by_student(student_key):
+    return [vl for vl in VocabList.all().ancestor(VocabListParent_key()).filter("student =", student_key).order('-created').run(limit=200)]

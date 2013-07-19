@@ -61,3 +61,16 @@ indexes:
   - name: student
   - name: created
     direction: desc
+
+- kind: VocabList
+  ancestor: yes
+  properties:
+  - name: story
+  - name: created
+
+- kind: VocabList
+  ancestor: yes
+  properties:
+  - name: student
+  - name: created
+    direction: desc

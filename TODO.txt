@@ -7,7 +7,7 @@ Caching Vocab and VocabList:
 	DONE	Introduce a 'save my vocab' button which will put the VocabList in the datastore.
 	js
 	DONE	The button will only be clickable when there are changes to save.
-	TODO	When a user navigates away or tries to switch mode, it will
+	DONE	When a user navigates away or tries to switch mode, it will
 		ask them to confirm whether they'd like to lose their changes.
 	
 	Why introduce this button?
