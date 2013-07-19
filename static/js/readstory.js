@@ -2,6 +2,8 @@ $(document).ready(function(){
     // global variables
     window.story_id = window.location.pathname.slice(1);
     window.$my_vocab_tbody = $('#my_vocab #my_vocab_table tbody');
+    window.my_vocab_has_changes = false;
+    window.$button_save_my_vocab = $('button#save_my_vocab');
 
     
     // What to show if not logged in. isLoggedIn is defined in base.js
@@ -61,8 +63,18 @@ function initMyVocab(vocab_area){
             alert('Somehow youre still in ' + active_tool.mode + ' mode.');
         }
         else {
-            addVocab($add_vocab_form, active_tool); 
+            var edit_tool = active_tool;
+            var new_row = '<tr><td>' + $input_new_word.val().trim() + '</td><td>' + $input_new_def.val().trim() + '</td></tr>';
+            if (!edit_tool){
+                $my_vocab_tbody.append(new_row);
+            } else {
+                edit_tool.chosen.replaceWith(new_row);
+                edit_tool.chosen = $();
+            }
+            $add_vocab_form.children('input').val('');
+            $input_new_word.focus();
             $error_msg.html('');
+            allowSaveMyVocab();
         }
         
         e.preventDefault();
@@ -70,6 +82,13 @@ function initMyVocab(vocab_area){
     
     // keep it scrolled down after submitting or focusing to new_word
     $input_new_word.focus(function(){vocab_area.scrollTop = vocab_area.scrollHeight;});
+}
+
+function allowSaveMyVocab(){
+    if (!my_vocab_has_changes){
+        my_vocab_has_changes = true;
+        $button_save_my_vocab.addClass('clickable').on('click', updateVocab);
+    }
 }
 
 function initUserVocab(){
@@ -121,7 +140,13 @@ function initUserVocab(){
         if (!$chosen.length){
             alert('Please select some rows to import');
         } else {
-            importVocab($chosen); // ajax
+            $chosen.removeClass('import_chosen')
+                   .clone()
+                   .appendTo($my_vocab_tbody);
+            $('#user_vocab #show_vocab span.success_message').slideDown(200)
+                                                         .delay(1000).fadeOut(200);
+            $chosen = $();
+            allowSaveMyVocab();
         }
         e.preventDefault();
     });
@@ -367,7 +392,11 @@ function buildVocabTools($add_vocab_form){
                 return false;
             } else {
                 var proceed = confirm('Are you sure you want to delete these words?');
-                if (proceed == true){ deleteVocab(vl_indices); } // ajax
+                if (proceed == true){
+                    self.chosen.remove();
+                    self.chosen = $(); // maybe superfluous
+                    allowSaveMyVocab();
+                }
             }
             e.preventDefault();
         });
@@ -378,36 +407,23 @@ function buildVocabTools($add_vocab_form){
         this.instructions.children('button#delete_selected').off('click');
     };
     
-    reorder_tool.has_changes = false;
     reorder_tool.at_turn_on = function(){
         $add_vocab_form.hide();
         $my_vocab_tbody.sortable({disabled: false});
         $my_vocab_tbody.addClass('moveable');
     };
     reorder_tool.at_turn_off = function(){
-        if (this.has_changes){ $my_vocab_tbody.sortable('cancel'); }
         $my_vocab_tbody.sortable('disable');
         $my_vocab_tbody.removeClass('moveable');
-        this.has_changes = false;
         $add_vocab_form.show();
     };
     reorder_tool.at_bind_events = function(){
         var self = this;
-        $my_vocab_tbody.on('sortupdate', function(e, ui){ self.has_changes = true; });
-        self.instructions.children('button#reorder').on('click', function(e){
-            if (!self.has_changes) { return false; }
-            
-            var keys_ordered = [];
-            $my_vocab_tbody.children('tr').each(function(i){
-                keys_ordered.push(this.id);
-            });
-            
-            reorderVocab(keys_ordered); // ajax
-            e.preventDefault();
+        $my_vocab_tbody.on('sortupdate', function(e, ui){
+            allowSaveMyVocab();
         });
     };
     reorder_tool.at_unbind_events = function(){
-        this.instructions.children('button#reorder').off('click');
         $my_vocab_tbody.off('sort_update');
     }
     
@@ -439,14 +455,9 @@ function buildVocabToolMenu($add_vocab_form){
                 // $my_vocab_tools.show();
             });
         } 
-        // when to show the tools button
-        // $tools_button.hide();
-        // $('div#vocab_area_container').on({
-        //     mouseenter: function(e){$tools_button.show();},
-        //     mouseleave: function(e){$tools_button.hide();},
-        // });
+
         // when to show the tool_menu
-        $tools_button.click(function(e){$tool_menu.show(); e.preventDefault();});
+        $tools_button.click(function(e){$tool_menu.slideDown(100); e.preventDefault();});
         // when to hide the tool_menu
         $my_vocab_tools.on({
             mouseenter: function(){$tools_button.css("color", "#28a875");},
@@ -477,90 +488,26 @@ function buildVocabToolMenu($add_vocab_form){
 // = Ajax Requests =
 // =================
 
-function addVocab($add_vocab_form, edit_tool){
-    // REFACTORED and TESTED :)
-    var vl_index = -1;
-    var mode = 'normal';
-    if (edit_tool){
-        vl_index = edit_tool.chosen.index(); //number of rows before it
-        mode = 'edit';
-    }
-    $.ajax({
-        url: "/addvocab",
-        type: "POST",
-        data: $add_vocab_form.serialize() + '&story_id=' + story_id 
-                    + '&mode=' + mode + '&vl_index=' + vl_index,
-        dataType : "html",
-        success: function( new_row ) {
-            if (!edit_tool){
-                $my_vocab_tbody.append(new_row);
-            } else {
-                edit_tool.chosen.replaceWith(new_row);
-                edit_tool.chosen = $();
-            }
-            $add_vocab_form.children('input').val('');
-        },
-        error: function( xhr, status ) {alert( "Sorry, there was a problem!");},
-        complete: function( xhr, status ) {$add_vocab_form.children('#new_word').focus();}
+// called when $button_save_my_vocab is clicked
+function updateVocab(e){
+    e.preventDefault();
+        
+    var hungarians = [];
+    var meanings = [];
+    $my_vocab_tbody.children().each(function(i){
+        hungarians.push($(this).children('td:first-child').html().trim());
+        meanings.push($(this).children('td:nth-child(2)').html().trim());
     });
-}
-    
-function deleteVocab(vl_indices){
-    // REFACTORED  :)
     $.ajax({
-        url: "/deletevocab",
+        url: "/updatevocab",
         type: "POST",
-        data: $.param({'vl_indices': vl_indices, 'story_id': story_id }),
+        data: $.param({'hung': hungarians, 'mean':meanings, 'story_id': story_id }),
         success: function() {
-            VocabTools.delete_tool.chosen.remove();
-            VocabTools.delete_tool.chosen = $(); // maybe superfluous
+            $('#my_vocab_tool_bar span.success_message').slideDown(200).delay(1000).fadeOut(200);
+            $button_save_my_vocab.removeClass('clickable').off('click');
+            my_vocab_has_changes = false;
         },
         error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
-    });
-}
-
-function reorderVocab(keys_ordered){
-    // REFACTORED :)
-    $.ajax({
-        url: "/reordervocab",
-        type: "POST",
-        data: $.param({'keys': keys_ordered, 'story_id': story_id}),
-        dataType: "html",
-        success: function() {
-            $('#reorder_instructions span.success_message').slideDown(200).delay(1000).fadeOut(400);
-        },
-        error: function( xhr, status) {alert( "Sorry, there was a problem!");},
-        complete: function( xhr, status) {
-            VocabTools.reorder_tool.has_changes = false;
-        }
-    });
-}
-
-function importVocab($chosen){
-    
-    var keys_to_add = []; // list of vocab keys encrypted
-    $chosen.each(function(){
-        keys_to_add.push(this.id);
-    });
-    // appends the keys to the students vocab list and adds the rows in the html
-    $.ajax({
-        url: "/importvocab",
-        type: "POST",
-        // the data to send (if object, will be converted to a query string)
-        data: $.param({'keys': keys_to_add, 'story_id': story_id }),
-        // the type of data we expect back
-        dataType : "html",
-        // the response is passed to the function
-        success: function() {
-            $chosen.removeClass('import_chosen')
-                   .clone()
-                   .appendTo($my_vocab_tbody);
-            $('#user_vocab #show_vocab span.success_message').slideDown(200)
-                                                         .delay(1000).fadeOut(200);
-            $chosen = $();
-        },
-        error: function( xhr, status ) {alert( "Sorry, there was a problem!");},
-        complete: function( xhr, status ) {}
     });
 }
 
@@ -656,4 +603,100 @@ function saveComments($comments_form){
 
 
 
+// OLD CODE
+// 
+// // not needed anymore
+// function addVocab($add_vocab_form, edit_tool){
+//     // REFACTORED and TESTED :)
+//     var vl_index = -1;
+//     var mode = 'normal';
+//     if (edit_tool){
+//         vl_index = edit_tool.chosen.index(); //number of rows before it
+//         mode = 'edit';
+//     }
+//     $.ajax({
+//         url: "/addvocab",
+//         type: "POST",
+//         data: $add_vocab_form.serialize() + '&story_id=' + story_id 
+//                     + '&mode=' + mode + '&vl_index=' + vl_index,
+//         dataType : "html",
+//         success: function( new_row ) {
+//             if (!edit_tool){
+//                 $my_vocab_tbody.append(new_row);
+//             } else {
+//                 edit_tool.chosen.replaceWith(new_row);
+//                 edit_tool.chosen = $();
+//             }
+//             $add_vocab_form.children('input').val('');
+//         },
+//         error: function( xhr, status ) {alert( "Sorry, there was a problem!");},
+//         complete: function( xhr, status ) {$add_vocab_form.children('#new_word').focus();}
+//     });
+// }
+// 
+// // not needed anymore    
+// function deleteVocab(vl_indices){
+//     VocabTools.delete_tool.chosen.remove();
+//     VocabTools.delete_tool.chosen = $(); // maybe superfluous
+//     
+//     $.ajax({
+//         url: "/deletevocab",
+//         type: "POST",
+//         data: $.param({'vl_indices': vl_indices, 'story_id': story_id }),
+//         success: function() {
+//             VocabTools.delete_tool.chosen.remove();
+//             VocabTools.delete_tool.chosen = $(); // maybe superfluous
+//         },
+//         error: function( xhr, status ) {alert( "Sorry, there was a problem!");}
+//     });
+// }
+// 
+// // not needed anymore
+// function reorderVocab(keys_ordered){
+//     // REFACTORED :)
+//     $.ajax({
+//         url: "/reordervocab",
+//         type: "POST",
+//         data: $.param({'keys': keys_ordered, 'story_id': story_id}),
+//         dataType: "html",
+//         success: function() {
+//             $('#reorder_instructions span.success_message').slideDown(200).delay(1000).fadeOut(400);
+//         },
+//         error: function( xhr, status) {alert( "Sorry, there was a problem!");},
+//         complete: function( xhr, status) {
+//             VocabTools.reorder_tool.has_changes = false;
+//         }
+//     });
+// }
+// 
+// // not needed anymore
+// function importVocab($chosen){
+//     
+//     var keys_to_add = []; // list of vocab keys encrypted
+//     $chosen.each(function(){
+//         keys_to_add.push(this.id);
+//     });
+//     // appends the keys to the students vocab list and adds the rows in the html
+//     $.ajax({
+//         url: "/importvocab",
+//         type: "POST",
+//         // the data to send (if object, will be converted to a query string)
+//         data: $.param({'keys': keys_to_add, 'story_id': story_id }),
+//         // the type of data we expect back
+//         dataType : "html",
+//         // the response is passed to the function
+//         success: function() {
+//             $chosen.removeClass('import_chosen')
+//                    .clone()
+//                    .appendTo($my_vocab_tbody);
+//             $('#user_vocab #show_vocab span.success_message').slideDown(200)
+//                                                          .delay(1000).fadeOut(200);
+//             $chosen = $();
+//         },
+//         error: function( xhr, status ) {alert( "Sorry, there was a problem!");},
+//         complete: function( xhr, status ) {}
+//     });
+// }
+// 
+// 
 

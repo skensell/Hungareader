@@ -1,11 +1,13 @@
 Next:
+	I've almost finished setting the stage for the Vocab and VocabList query caching.
+	
 
 Caching Vocab and VocabList:
 	html/css	
-		Introduce a 'save my vocab' button which will put the VocabList in the datastore.
+	DONE	Introduce a 'save my vocab' button which will put the VocabList in the datastore.
 	js
-		The button will only be clickable when there are changes to save.
-		When a user navigates away or tries to switch mode, it will
+	DONE	The button will only be clickable when there are changes to save.
+	TODO	When a user navigates away or tries to switch mode, it will
 		ask them to confirm whether they'd like to lose their changes.
 	
 	Why introduce this button?
@@ -14,6 +16,9 @@ Caching Vocab and VocabList:
 		button is clicked, it will create new vocab instances and overwrite the vocab list.
 		- I will actually be able to get rid of ImportVocab entirely, modifying it
 		so that it just edits the DOM and only saves my_vocab when the button is clicked.
+
+After getting vocab refactored:
+	TODO I no longer need to feed the keys in when loading readstory.html
 
 CACHING:
 	- readstory

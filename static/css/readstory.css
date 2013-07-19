@@ -104,9 +104,9 @@ p {
 #my_vocab_tool_bar {
     position: fixed;
     z-index: 3;
-    width: 10em;
+    width: 16em;
     top: 6.9em;
-    right: 18.5em;
+    right: 12.5em;
     background: rgba(0,0,0,0);
 }
 
@@ -120,20 +120,32 @@ p {
     border: none;
     background: none;
     width: 1.5em;
+    cursor: default;
 }
 
-#my_vocab_tool_bar button#save_my_vocab:hover {
+#my_vocab_tool_bar button#save_my_vocab.clickable{
     color: #28a875;
 }
 
+#my_vocab_tool_bar button#save_my_vocab.clickable:hover {
+    cursor: pointer;
+}
+
 #my_vocab_tool_bar div#my_vocab_tools {
-    display: block;
+    display: inline-block;
     float: left;
+}
+
+#my_vocab_tool_bar div#top_success {
+    display: inline-block;
+    float: left;
+    margin: 0;
+    padding: .5em 0;
 }
 
 div#my_vocab_tools div#tools_button_container{
     /* needed so the menu doesn't immediately disappear on mouseleave*/
-    width: 7em;
+    width: 5.75em;
 }
 
 div#my_vocab_tools button#tools_button {
