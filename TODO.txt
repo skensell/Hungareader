@@ -1,6 +1,3 @@
-Hello, Scott!
-Still here.
-
 Next:
 
 Caching Vocab and VocabList:

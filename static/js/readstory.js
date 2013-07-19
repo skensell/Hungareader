@@ -421,39 +421,39 @@ function buildVocabToolMenu($add_vocab_form){
     
     var $my_vocab_tools = $("#my_vocab_tools");
     var $normal_instructions = $('div#normal_instructions');
-    var $pencil_icon = $my_vocab_tools.find('a#pencil_icon');
+    var $tools_button = $my_vocab_tools.find('button#tools_button');
     var $tool_menu = $my_vocab_tools.find("ul#tool_menu");
     
-    function pencil_icon_and_instructions(){
-        $my_vocab_tools.hide();
+    function tools_button_and_instructions(){
+        // $my_vocab_tools.hide();
         if ($my_vocab_tbody.children('tr').length) {
             $normal_instructions.hide();
-            $my_vocab_tools.show();
+            // $my_vocab_tools.show();
         } else {
             $add_vocab_form.one("submit", function(e){
                 $normal_instructions.hide();
-                $my_vocab_tools.show();
+                // $my_vocab_tools.show();
             });
             $('#user_vocab #show_vocab button.import_chosen').one("click", function(e){
                 $normal_instructions.hide();
-                $my_vocab_tools.show();
+                // $my_vocab_tools.show();
             });
         } 
-        // when to show the pencil icon
-        $pencil_icon.hide();
-        $('div#vocab_area_container').on({
-            mouseenter: function(e){$pencil_icon.show();},
-            mouseleave: function(e){$pencil_icon.hide();},
-        });
+        // when to show the tools button
+        // $tools_button.hide();
+        // $('div#vocab_area_container').on({
+        //     mouseenter: function(e){$tools_button.show();},
+        //     mouseleave: function(e){$tools_button.hide();},
+        // });
         // when to show the tool_menu
-        $pencil_icon.click(function(e){$tool_menu.show(); e.preventDefault();});
+        $tools_button.click(function(e){$tool_menu.show(); e.preventDefault();});
         // when to hide the tool_menu
         $my_vocab_tools.on({
-            mouseenter: function(){$pencil_icon.css("color", "#28a875");},
-            mouseleave: function(){$tool_menu.hide(); $pencil_icon.css("color", "lightgrey");}
+            mouseenter: function(){$tools_button.css("color", "#28a875");},
+            mouseleave: function(){$tool_menu.hide(); $tools_button.css("color", "lightgrey");}
         });
     }
-    pencil_icon_and_instructions();
+    tools_button_and_instructions();
     
     // Switching modes via clicking
     var $menu_links = $tool_menu.find('a');

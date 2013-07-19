@@ -41,26 +41,27 @@
 <!-- The below has fixed position so it doesn't actually matter that it's in right_side -->
 <div id="vocab_area_container">
 		<div id="my_vocab">
-			
-			<div id="my_vocab_tools">
-				<div id="pencil_icon_container">
-					<a href="#" id="pencil_icon"><i class="icon-pencil"></i></a>
-					<div class="clear"></div>
+			<div id="my_vocab_tool_bar">
+				
+				<button id="save_my_vocab"><i class="icon-save"></i></button>
+				
+				<div id="my_vocab_tools">
+					<div id="tools_button_container">
+						<button id="tools_button"><i class="icon-pencil"></i></button>
+						<div class="clear"></div>
+					</div>
+					<ul id="tool_menu">
+						<li><a href="#" id="edit_tool"><i class="icon-edit"></i> edit
+							<span class="on_switch">(on)</span></a></li>
+						<li><a href="#" id="delete_tool"><i class="icon-remove"></i> delete
+							<span class="on_switch">(on)</span></a></li>
+						<li><a href="#" id="reorder_tool"><i class="icon-reorder"></i> reorder
+							<span class="on_switch">(on)</span></a></li>
+					</ul>
 				</div>
-				<ul id="tool_menu">
-					<li><a href="#" id="edit_tool"><i class="icon-edit"></i> edit
-						<span class="on_switch">(on)</span></a></li>
-					<li><a href="#" id="delete_tool"><i class="icon-remove"></i> delete
-						<span class="on_switch">(on)</span></a></li>
-					<li><a href="#" id="reorder_tool"><i class="icon-reorder"></i> reorder
-						<span class="on_switch">(on)</span></a></li>
-				</ul>
-			</div>
 			
-			<div id="save_my_vocab">
-				<a href="#"><i class="icon-save"></i> save</a>
+				
 			</div>
-			
 			<div id="normal_instructions">
 				<p>You don't have any vocabulary yet for this story. To add words, you can either
 					import from other students' vocab lists or just start typing below!
