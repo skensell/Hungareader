@@ -1,4 +1,5 @@
 import hmac
+# Weird things happen when the c in crypto is lowercase or uppercase
 from Crypto.Cipher import DES
 import base64
 
